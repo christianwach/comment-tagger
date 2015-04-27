@@ -171,7 +171,7 @@ class Comment_Tagger {
 				// capabilities
 				'capabilities' => array(
 					'manage_terms' => 'edit_users', // Using 'edit_users' cap to keep this simple.
-					'edit_terms'   => 'edit_users',
+					'edit_terms' => 'edit_users',
 					'delete_terms' => 'edit_users',
 					'assign_terms' => 'read',
 				),
@@ -212,13 +212,6 @@ class Comment_Tagger {
 	 */
 	public function update_tag_count( $terms, $taxonomy ) {
 
-		/*
-		trigger_error( print_r( array(
-			'terms' => $terms,
-			'taxonomy' => $taxonomy,
-		), true ), E_USER_ERROR ); die();
-		*/
-
 		// access db wrapper
 		global $wpdb;
 
@@ -236,20 +229,10 @@ class Comment_Tagger {
 			// get count
 			$count = $wpdb->get_var( $sql );
 
-			/*
-			print_r( array(
-				//'terms' => $terms,
-				//'taxonomy' => $taxonomy,
-				'term' => $term,
-				'sql' => $sql,
-				'count' => $count,
-			) ); die();
-			*/
-
 			// update
 			do_action( 'edit_term_taxonomy', $term, $taxonomy );
 			$wpdb->update( $wpdb->term_taxonomy, array( 'count' => $count ), array( 'term_taxonomy_id' => $term ) );
-        	do_action( 'edited_term_taxonomy', $term, $taxonomy );
+			do_action( 'edited_term_taxonomy', $term, $taxonomy );
 
 		}
 
@@ -391,7 +374,6 @@ class Comment_Tagger {
 
 		// access comment
 		global $comment;
-		//print_r( $comment ); die();
 
 		$tax = get_taxonomy( COMMENT_TAGGER_TAX );
 
@@ -400,7 +382,6 @@ class Comment_Tagger {
 
 		// get the terms
 		$terms = get_terms( COMMENT_TAGGER_TAX, array( 'hide_empty' => false ) );
-		//print_r( $terms ); die();
 
 		// get terms for this comment
 		$object_terms = wp_get_object_terms( $comment->comment_ID, COMMENT_TAGGER_TAX );
