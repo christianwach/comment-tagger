@@ -269,14 +269,29 @@ class Comment_Tagger {
 	 */
 	public function enqueue_styles() {
 
-		// add basic stylesheet
-		wp_enqueue_style(
-			'comment_tagger_css',
-			plugin_dir_url( __FILE__ ) . 'comment-tagger.css',
-			false,
-			COMMENT_TAGGER_VERSION, // version
-			'all' // media
-		);
+		global $pagenow;
+
+		// if we're on our taxonomy page
+		if ( ! empty( $_GET['taxonomy'] ) AND $_GET['taxonomy'] == COMMENT_TAGGER_TAX AND $pagenow == 'edit-tags.php' ) {
+
+			// add basic stylesheet
+			wp_enqueue_style(
+				'comment_tagger_css',
+				plugin_dir_url( __FILE__ ) . 'comment-tagger.css',
+				false,
+				COMMENT_TAGGER_VERSION, // version
+				'all' // media
+			);
+
+		}
+
+		// if we're on the "Edit Comment" page
+		if (  $pagenow == 'comment.php' AND ! empty( $_GET['action'] ) AND $_GET['action'] == 'editcomment' ) {
+
+			// the tags meta box requires this script
+			wp_enqueue_script( 'post' );
+
+		}
 
 	}
 
@@ -352,13 +367,26 @@ class Comment_Tagger {
 	 */
 	function add_meta_box() {
 
+		/*
 		// add meta box
 		add_meta_box(
 			'comment_tagger_meta_box',
-			__( 'Comment Tags', 'comment-tagger' ),
+			__( 'Comment Tagger', 'comment-tagger' ),
 			array( $this, 'comment_meta_box' ),
 			'comment',
 			'normal'
+		);
+		*/
+
+		// let's use the built-in tags metabox
+		add_meta_box(
+			'tagsdiv-post_tag',
+			__( 'Comment Tags', 'comment-tagger' ), // custom name
+			'comment_tagger_post_tags_meta_box', // custom callback
+			'comment',
+			'normal',
+			'default',
+			array( 'taxonomy' => COMMENT_TAGGER_TAX )
 		);
 
 	}
@@ -460,22 +488,127 @@ class Comment_Tagger {
 		// make sure the user can assign terms
 		if ( ! current_user_can( $tax->cap->assign_terms ) ) return;
 
-		// is this a multi-term taxonomy?
-		if ( is_array( $_POST[COMMENT_TAGGER_TAX] ) ) {
+		error_log( print_r( array(
+			'POST' => $_POST,
+			'GET' => $_GET,
+		), true ) );
 
-			// yes, get terms and validate
-			$term = array_map( 'esc_attr', $_POST[COMMENT_TAGGER_TAX] );
+		// do we have any *existing* terms?
+		if ( isset( $_POST['tax_input'][COMMENT_TAGGER_TAX] ) ) {
 
-		} else {
+			// get sanitised term IDs
+			$existing_term_ids = $this->sanitise_comment_terms( $_POST['tax_input'][COMMENT_TAGGER_TAX] );
 
-			// no, get single term
-			$term = array( esc_attr( $_POST[COMMENT_TAGGER_TAX] ) );
+			// did we get any?
+			if ( ! empty( $existing_term_ids ) ) {
+
+				// save them
+				wp_set_object_terms( $comment_id, $existing_term_ids, COMMENT_TAGGER_TAX, false );
+
+			}
 
 		}
 
-		// save and clear cache
-		wp_set_object_terms( $comment_id, $term, COMMENT_TAGGER_TAX, false );
+		// do we have any *new* terms?
+		if ( isset( $_POST['newtag'][COMMENT_TAGGER_TAX] ) ) {
+
+			// get sanitised term IDs
+			$new_term_ids = $this->sanitise_comment_terms( $_POST['newtag'][COMMENT_TAGGER_TAX] );
+
+			// did we get any?
+			if ( ! empty( $new_term_ids ) ) {
+
+				// save them
+				wp_set_object_terms( $comment_id, $new_term_ids, COMMENT_TAGGER_TAX, false );
+
+			}
+
+		}
+
+		// clear cache
 		clean_object_term_cache( $comment_id, COMMENT_TAGGER_TAX );
+
+	}
+
+
+
+	/**
+	 * Sanitise comment terms
+	 *
+	 * @param mixed $raw_terms The term names as retrieved from $_POST
+	 * @return void
+	 */
+	private function sanitise_comment_terms( $raw_terms ) {
+
+		// is this a multi-term taxonomy?
+		if ( is_array( $raw_terms ) ) {
+
+			// yes, get terms and validate
+			$terms = array_map( 'esc_attr', $raw_terms );
+
+		} else {
+
+			// we should receive a comma-delimited array of term names
+			$terms = array_map( 'esc_attr', explode( ',', $raw_terms ) );
+
+		}
+
+		// init term IDs
+		$term_ids = array();
+
+		// loop through them
+		foreach( $terms AS $term ) {
+
+			// does the term exist?
+			$exists = term_exists( $term, COMMENT_TAGGER_TAX );
+
+			// if it does...
+			if ( $exists !== 0 AND $exists !== null ) {
+
+				// should be array e.g. array('term_id'=>12,'term_taxonomy_id'=>34)
+				// since we specify the taxonomy.
+
+				// add term ID to array
+				$term_ids[] = $exists['term_id'];
+
+			} else {
+
+				// let's add the term - but note: return value is either:
+				// WP_Error or array e.g. array('term_id'=>12,'term_taxonomy_id'=>34)
+				$new_term = wp_insert_term( $term, COMMENT_TAGGER_TAX );
+
+				// skip if error
+				if ( is_wp_error( $new_term ) ) {
+
+					// there was an error somewhere and the terms couldn't be set:
+					// we should let people know at some point...
+
+				} else {
+
+					// add term ID to array
+					$term_ids[] = $new_term['term_id'];
+
+				}
+
+			}
+
+		}
+
+		// did we get any?
+		if ( ! empty( $term_ids ) ) {
+
+			// sanity checks
+			$term_ids = array_map( 'intval', $term_ids );
+			$term_ids = array_unique( $term_ids );
+
+			error_log( print_r( array(
+				'term_ids' => $term_ids,
+			), true ) );
+
+		}
+
+		// --<
+		return $term_ids;
 
 	}
 
@@ -487,7 +620,7 @@ class Comment_Tagger {
 	 * @param int $comment_id The ID of the comment being saved
 	 * @return void
 	 */
-	function delete_comment_terms( $comment_id ) {
+	public function delete_comment_terms( $comment_id ) {
 
 		wp_delete_object_term_relationships( $comment_id, COMMENT_TAGGER_TAX );
 		clean_object_term_cache( $comment_id, COMMENT_TAGGER_TAX );
@@ -511,3 +644,69 @@ function comment_tagger() {
 
 // init Comment Tagger
 comment_tagger();
+
+
+
+/**
+ * This is a clone of `post_tags_meta_box` which is usually used to display post
+ * tags form fields. It has been modified so that the terms are assigned to the
+ * comment not the post. There's a to-do note on the original that suggests that
+ * it should be made more compatible with general taxonomies...
+ *
+ * @todo Create taxonomy-agnostic wrapper for this.
+ *
+ * @see post_tags_meta_box
+ *
+ * @param WP_Post $post Post object.
+ * @param array   $box {
+ *     Tags meta box arguments.
+ *
+ *     @type string   $id       Meta box ID.
+ *     @type string   $title    Meta box title.
+ *     @type callback $callback Meta box display callback.
+ *     @type array    $args {
+ *         Extra meta box arguments.
+ *
+ *         @type string $taxonomy Taxonomy. Default 'post_tag'.
+ *     }
+ * }
+ */
+function comment_tagger_post_tags_meta_box( $post, $box ) {
+
+	// access comment
+	global $comment;
+
+	$defaults = array( 'taxonomy' => 'post_tag' );
+	if ( ! isset( $box['args'] ) || ! is_array( $box['args'] ) ) {
+		$args = array();
+	} else {
+		$args = $box['args'];
+	}
+	$r = wp_parse_args( $args, $defaults );
+	$tax_name = esc_attr( $r['taxonomy'] );
+	$taxonomy = get_taxonomy( $r['taxonomy'] );
+	$user_can_assign_terms = current_user_can( $taxonomy->cap->assign_terms );
+	$comma = _x( ',', 'tag delimiter' );
+?>
+<div class="tagsdiv" id="<?php echo $tax_name; ?>">
+	<div class="jaxtag">
+	<div class="nojs-tags hide-if-js">
+	<p><?php echo $taxonomy->labels->add_or_remove_items; ?></p>
+	<textarea name="<?php echo "tax_input[$tax_name]"; ?>" rows="3" cols="20" class="the-tags" id="tax-input-<?php echo $tax_name; ?>" <?php disabled( ! $user_can_assign_terms ); ?>><?php echo str_replace( ',', $comma . ' ', get_terms_to_edit( $comment->comment_ID, $tax_name ) ); // textarea_escaped by esc_attr() ?></textarea></div>
+ 	<?php if ( $user_can_assign_terms ) : ?>
+	<div class="ajaxtag hide-if-no-js">
+		<label class="screen-reader-text" for="new-tag-<?php echo $tax_name; ?>"><?php echo $box['title']; ?></label>
+		<p><input type="text" id="new-tag-<?php echo $tax_name; ?>" name="newtag[<?php echo $tax_name; ?>]" class="newtag form-input-tip" size="16" autocomplete="off" value="" />
+		<input type="button" class="button tagadd" value="<?php esc_attr_e('Add'); ?>" /></p>
+	</div>
+	<p class="howto"><?php echo $taxonomy->labels->separate_items_with_commas; ?></p>
+	<?php endif; ?>
+	</div>
+	<div class="tagchecklist"></div>
+</div>
+<?php if ( $user_can_assign_terms ) : ?>
+<p class="hide-if-no-js"><a href="#titlediv" class="tagcloud-link" id="link-<?php echo $tax_name; ?>"><?php echo $taxonomy->labels->choose_from_most_used; ?></a></p>
+<?php endif; ?>
+<?php
+}
+
