@@ -159,13 +159,11 @@ class Comment_Tagger {
 					'choose_from_most_used' => __( 'Choose from the most popular Comment Tags', 'comment-tagger' ),
 				),
 
-				/*
 				// permalinks
 				'rewrite' => array(
 					'with_front' => true,
 					'slug' => 'comments/tags'
 				),
-				*/
 
 				/*
 				// capabilities
