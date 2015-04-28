@@ -188,14 +188,23 @@ class Comment_Tagger {
 		add_filter( 'manage_edit-' . COMMENT_TAGGER_TAX . '_columns', array( $this, 'set_comment_column' ) );
 		add_action( 'manage_' . COMMENT_TAGGER_TAX . '_custom_column', array( $this, 'set_comment_column_values'), 10, 3 );
 
-		/*
+	}
+
+
+
+	/**
+	 * Force update the number of comments for a taxonomy term
+	 *
+	 * @return void
+	 */
+	public function refresh_tag_count() {
+
 		$terms = get_terms( COMMENT_TAGGER_TAX, array( 'hide_empty' => false ) );
 		$tids = array();
 		foreach( $terms AS $term ) {
 			$tids[] = $term->term_taxonomy_id;
 		}
 		wp_update_term_count_now( $tids, COMMENT_TAGGER_TAX );
-		*/
 
 	}
 
