@@ -497,11 +497,6 @@ class Comment_Tagger {
 		// make sure the user can assign terms
 		if ( ! current_user_can( $tax->cap->assign_terms ) ) return;
 
-		error_log( print_r( array(
-			'POST' => $_POST,
-			'GET' => $_GET,
-		), true ) );
-
 		// do we have any *existing* terms?
 		if ( isset( $_POST['tax_input'][COMMENT_TAGGER_TAX] ) ) {
 
@@ -609,10 +604,6 @@ class Comment_Tagger {
 			// sanity checks
 			$term_ids = array_map( 'intval', $term_ids );
 			$term_ids = array_unique( $term_ids );
-
-			error_log( print_r( array(
-				'term_ids' => $term_ids,
-			), true ) );
 
 		}
 
