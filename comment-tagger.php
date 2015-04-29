@@ -708,3 +708,197 @@ function comment_tagger_post_tags_meta_box( $post, $box ) {
 <?php
 }
 
+
+
+/**
+ * Utility function to get tagged comments for a taxonomy archive page
+ *
+ * @return array $comments The comments
+ */
+function comment_tagger_get_tagged_comments() {
+
+	// init return
+	$comments = array();
+
+	// get queried data
+	$comment_term_id = get_queried_object_id();
+	$comment_term = get_queried_object();
+
+	// get comment IDs
+	$tagged_comments = get_objects_in_term( $comment_term_id, $comment_term->taxonomy );
+
+	// test for empty
+	if ( ! empty( $tagged_comments ) ) {
+
+		// create custom query
+		$comments_query = new WP_Comment_Query;
+
+		// define args
+		$args = apply_filters( 'comment_tagger_get_tagged_comments_args' , array(
+			'comment__in' => $tagged_comments,
+			'status' => 'approve',
+			'orderby' => 'comment_post_ID,comment_date',
+			'order' => 'ASC',
+		) );
+
+		// do the query
+		$comments = $comments_query->query( $args );
+		//print_r( $comments ); //die();
+
+	}
+
+	// --<
+	return $comments;
+
+}
+
+
+
+/**
+ * Tagged comments page display function specifically designed for CommentPress
+ *
+ * @return str $html The comments
+ */
+function commentpress_get_tagged_comments_content() {
+
+	// init output
+	$html = '';
+
+	// get all comments for this archive
+	$all_comments = comment_tagger_get_tagged_comments();
+
+	// kick out if none
+	if ( count( $all_comments ) == 0 ) return $html;
+
+	// build list of posts to which they are attached
+	$posts_with = array();
+	$post_comment_counts = array();
+	foreach( $all_comments AS $comment ) {
+
+		// add to posts with comments array
+		if ( ! in_array( $comment->comment_post_ID, $posts_with ) ) {
+			$posts_with[] = $comment->comment_post_ID;
+		}
+
+		// increment counter
+		if ( ! isset( $post_comment_counts[$comment->comment_post_ID] ) ) {
+			$post_comment_counts[$comment->comment_post_ID] = 1;
+		} else {
+			$post_comment_counts[$comment->comment_post_ID]++;
+		}
+
+	}
+
+	// kick out if none
+	if ( count( $posts_with ) == 0 ) return $html;
+
+	// create args
+	$args = array(
+		'orderby' => 'comment_count',
+		'order' => 'DESC',
+		'post_type' => 'any',
+		'post__in' => $posts_with,
+		'posts_per_page' => 1000000,
+		'ignore_sticky_posts' => 1,
+		'post_status' => array( 'publish', 'inherit' )
+	);
+
+	// create query
+	$query = new WP_Query( $args );
+
+	// did we get any?
+	if ( $query->have_posts() ) {
+
+		// open ul
+		$html .= '<ul class="all_comments_listing">' . "\n\n";
+
+		while ( $query->have_posts() ) {
+
+			$query->the_post();
+
+			// open li
+			$html .= '<li class="page_li"><!-- page li -->' . "\n\n";
+
+			// define comment count
+			$comment_count_text = sprintf( _n(
+
+				// singular
+				'<span class="cp_comment_count">%d</span> comment',
+
+				// plural
+				'<span class="cp_comment_count">%d</span> comments',
+
+				// number
+				$post_comment_counts[get_the_ID()],
+
+				// domain
+				'commentpress-core'
+
+			// substitution
+			), $post_comment_counts[get_the_ID()] );
+
+			// show it
+			$html .= '<h4>' . get_the_title() . ' <span>(' . $comment_count_text . ')</span></h4>' . "\n\n";
+
+			// open comments div
+			$html .= '<div class="item_body">' . "\n\n";
+
+			// open ul
+			$html .= '<ul class="item_ul">' . "\n\n";
+
+			// open li
+			$html .= '<li class="item_li"><!-- item li -->' . "\n\n";
+
+			// check for password-protected
+			if ( post_password_required( get_the_ID() ) ) {
+
+				// construct notice
+				$comment_body = '<div class="comment-content">' . __( 'Password protected', 'commentpress-core' ) . '</div>' . "\n";
+
+				// add notice
+				$html .= '<div class="comment_wrapper">' . "\n" . $comment_body . '</div>' . "\n\n";
+
+			} else {
+
+				foreach( $all_comments AS $comment ) {
+
+					if ( $comment->comment_post_ID == get_the_ID() ) {
+
+						// show the comment
+						$html .= commentpress_format_comment( $comment );
+
+					}
+
+				}
+
+			}
+
+			// close li
+			$html .= '</li><!-- /item li -->'."\n\n";
+
+			// close ul
+			$html .= '</ul>'."\n\n";
+
+			// close item div
+			$html .= '</div><!-- /item_body -->'."\n\n";
+
+			// close li
+			$html .= '</li><!-- /page li -->'."\n\n\n\n";
+
+		}
+
+		// close ul
+		$html .= '</ul><!-- /all_comments_listing -->'."\n\n";
+
+		// reset
+		wp_reset_postdata();
+
+	} // end have_posts()
+
+	// --<
+	return $html;
+
+}
+
+
+
