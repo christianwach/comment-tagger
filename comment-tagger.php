@@ -832,7 +832,7 @@ function commentpress_get_tagged_comments_content() {
 				$post_comment_counts[get_the_ID()],
 
 				// domain
-				'commentpress-core'
+				'comment-tagger'
 
 			// substitution
 			), $post_comment_counts[get_the_ID()] );
@@ -853,7 +853,7 @@ function commentpress_get_tagged_comments_content() {
 			if ( post_password_required( get_the_ID() ) ) {
 
 				// construct notice
-				$comment_body = '<div class="comment-content">' . __( 'Password protected', 'commentpress-core' ) . '</div>' . "\n";
+				$comment_body = '<div class="comment-content">' . __( 'Password protected', 'comment-tagger' ) . '</div>' . "\n";
 
 				// add notice
 				$html .= '<div class="comment_wrapper">' . "\n" . $comment_body . '</div>' . "\n\n";
