@@ -162,7 +162,7 @@ class Comment_Tagger {
 				// permalinks
 				'rewrite' => array(
 					'with_front' => true,
-					'slug' => 'comments/tags'
+					'slug' => apply_filters( 'comment_tagger_tax_slug', 'comments/tags' )
 				),
 
 				/*
