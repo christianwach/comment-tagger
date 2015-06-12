@@ -113,6 +113,9 @@ class Comment_Tagger {
 		// register any public scripts
 		add_action( 'wp_enqueue_scripts', array( $this, 'front_end_enqueue_scripts' ), 20 );
 
+		// add tags to comment content
+		add_filter( 'get_comment_text', array( $this, 'front_end_tags' ), 10, 2 );
+
 		// add UI to CommentPress comments
 		add_action( 'commentpress_comment_form_pre_comment_id_fields', array( $this, 'front_end_markup' ) );
 
@@ -400,17 +403,6 @@ class Comment_Tagger {
 	 * @return void
 	 */
 	public function add_meta_box() {
-
-		/*
-		// add meta box
-		add_meta_box(
-			'comment_tagger_meta_box',
-			__( 'Comment Tagger', 'comment-tagger' ),
-			array( $this, 'comment_meta_box' ),
-			'comment',
-			'normal'
-		);
-		*/
 
 		// let's use the built-in tags metabox
 		add_meta_box(
@@ -716,6 +708,59 @@ class Comment_Tagger {
 
 		wp_delete_object_term_relationships( $comment_id, COMMENT_TAGGER_TAX );
 		clean_object_term_cache( $comment_id, COMMENT_TAGGER_TAX );
+
+	}
+
+
+
+	/**
+	 * Show tags on front-end, appended to comment text
+	 *
+	 * @param str $comment_text The comment content
+	 * @param object $comment The WordPress comment object
+	 * @return void
+	 */
+	public function front_end_tags( $comment_text, $comment ) {
+
+		// sanity check
+		if ( ! isset( $comment->comment_ID ) ) return $comment_text;
+
+		// get terms for this comment
+		$terms = wp_get_object_terms( $comment->comment_ID, COMMENT_TAGGER_TAX );
+
+		// bail if empty
+		if ( count( $terms ) === 0 ) return $comment_text;
+
+		// init tag list
+		$tag_list = array();
+
+		// did we get any?
+		if ( count( $terms ) > 0 ) {
+
+			// create markup for each
+			foreach( $terms AS $term ) {
+
+				// get url
+				$term_href = get_term_link( $term, COMMENT_TAGGER_TAX );
+
+				// construct link
+				$term_link = '<a class="comment_tagger_tag_link" href="' . $term_href . '">' . esc_html( $term->name ) . '</a>';
+
+				// wrap and add to list
+				$tag_list[] = '<span class="comment_tagger_tag">' . $term_link . '</span>';
+
+			}
+
+			// wrap in identifying div
+			$tags = '<div class="comment_tagger_tags"><p>' . __( 'Tagged: ' ) . implode( ' ', $tag_list ) . '</p></div>';
+
+			// prepend to text
+			$comment_text = $tags . $comment_text;
+
+		}
+
+		// --<
+		return $comment_text;
 
 	}
 
