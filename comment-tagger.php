@@ -18,7 +18,7 @@ define( 'COMMENT_TAGGER_VERSION', '0.1' );
 
 // define taxonomy name
 if ( ! defined( 'COMMENT_TAGGER_TAX' ) ) {
-	define( 'COMMENT_TAGGER_TAX', 'classification' );
+	define( 'COMMENT_TAGGER_TAX', 'comment_tags' );
 }
 
 // define taxonomy prefix for Select2
