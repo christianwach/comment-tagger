@@ -93,7 +93,9 @@ CommentTagger.comments = new function() {
 	 */
 	this.dom_ready = function() {
 
+		// init Select2
 		me.select2.init();
+		me.select2.listeners();
 
 	};
 
@@ -117,7 +119,7 @@ CommentTagger.comments.select2 = new function() {
 	/**
 	 * Select2 init
 	 */
-	this.init = function( target ) {
+	this.init = function() {
 
 		/**
 		 * Select2 init
@@ -127,6 +129,30 @@ CommentTagger.comments.select2 = new function() {
 			tokenSeparators: [','],
 			multiple: true
 		});
+
+	};
+
+	/**
+	 * Select2 listeners
+	 */
+	this.listeners = function() {
+
+		/**
+		 * Hook into CommentPress AJAX new comment added
+		 *
+		 * @param object event The event (unused)
+		 * @param int comment_id The new comment ID
+		 * @return void
+		 */
+		$(document).on(
+			'commentpress-ajax-comment-added',
+			function( event, comment_id ) {
+
+				// reset Select2
+				$('.comment_tagger_select2').val( null ).trigger( "change" );
+
+			} // end function
+		);
 
 	};
 
