@@ -16,8 +16,19 @@ Domain Path: /languages
 // define version (bumping this refreshes CSS and JS)
 define( 'COMMENT_TAGGER_VERSION', '0.1' );
 
-// define taxonomy
-define( 'COMMENT_TAGGER_TAX', 'classification' );
+// define taxonomy name
+if ( ! defined( 'COMMENT_TAGGER_TAX' ) ) {
+	define( 'COMMENT_TAGGER_TAX', 'classification' );
+}
+
+// define taxonomy prefix for Select2
+if ( ! defined( 'COMMENT_TAGGER_PREFIX' ) ) {
+
+	// this is a "unique-enough" prefix so we can distinguish between new tags
+	// and the selection of pre-existing ones when the comment form is posted
+	define( 'COMMENT_TAGGER_PREFIX', 'cmmnt_tggr' );
+
+}
 
 
 
@@ -71,6 +82,8 @@ class Comment_Tagger {
 		// create taxonomy
 		add_action( 'init', array( $this, 'create_taxonomy' ), 0 );
 
+		// admin hooks
+
 		// add admin page
 		add_action( 'admin_menu', array( $this, 'admin_page' ) );
 
@@ -83,11 +96,25 @@ class Comment_Tagger {
 		// register a meta box
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
 
+		// intercept comment save process
+		add_action( 'comment_post', array( $this, 'intercept_comment_save' ), 20, 2 );
+
 		// intercept comment edit process
-		add_action( 'edit_comment', array( $this, 'save_comment_terms' ) );
+		add_action( 'edit_comment', array( $this, 'update_comment_terms' ) );
 
 		// intercept comment delete process
 		add_action( 'delete_comment', array( $this, 'delete_comment_terms' ) );
+
+		// front-end hooks
+
+		// register any public styles
+		add_action( 'wp_enqueue_scripts', array( $this, 'front_end_enqueue_styles' ), 20 );
+
+		// register any public scripts
+		add_action( 'wp_enqueue_scripts', array( $this, 'front_end_enqueue_scripts' ), 20 );
+
+		// add UI to CommentPress comments
+		add_action( 'commentpress_comment_form_pre_comment_id_fields', array( $this, 'front_end_markup' ) );
 
 		// fwiw, broadcast to other plugins
 		do_action( 'comment_tagger_loaded' );
@@ -284,7 +311,7 @@ class Comment_Tagger {
 			// add basic stylesheet
 			wp_enqueue_style(
 				'comment_tagger_css',
-				plugin_dir_url( __FILE__ ) . 'comment-tagger.css',
+				plugin_dir_url( __FILE__ ) . 'assets/css/comment-tagger-admin.css',
 				false,
 				COMMENT_TAGGER_VERSION, // version
 				'all' // media
@@ -372,7 +399,7 @@ class Comment_Tagger {
 	 *
 	 * @return void
 	 */
-	function add_meta_box() {
+	public function add_meta_box() {
 
 		/*
 		// add meta box
@@ -405,7 +432,7 @@ class Comment_Tagger {
 	 *
 	 * @return void
 	 */
-	function comment_meta_box() {
+	public function comment_meta_box() {
 
 		// access comment
 		global $comment;
@@ -483,31 +510,95 @@ class Comment_Tagger {
 
 
 	/**
+	 * Intercept the comment save process and maybe update terms
+	 *
+	 * @param int $comment_id The numeric ID of the comment
+	 * @param str $comment_status The status of the comment
+	 * @return void
+	 */
+	public function intercept_comment_save( $comment_id, $comment_status ) {
+
+		// bail if we didn't receive any terms
+		if ( ! isset( $_POST['comment_tagger_tags'] ) ) return;
+
+		// bail if the terms array is somehow invalid
+		if ( ! is_array( $_POST['comment_tagger_tags'] ) ) return;
+		if ( count( $_POST['comment_tagger_tags'] ) === 0 ) return;
+
+		// init "existing" and "new" arrays
+		$existing_term_ids = array();
+		$new_term_ids = array();
+		$new_terms = array();
+
+		// parse the received terms
+		foreach( $_POST['comment_tagger_tags'] AS $term ) {
+
+			// does the term contain our prefix?
+			if ( strstr( $term, COMMENT_TAGGER_PREFIX ) ) {
+
+				// it's an existing term
+				$tmp = explode( '-', $term );
+
+				// get term ID
+				$term_id = isset( $tmp[1] ) ? intval( $tmp[1] ) : 0;
+
+				// add to existing
+				if ( $term_id !== 0 ) $existing_term_ids[] = $term_id;
+
+			} else {
+
+				// add term to new
+				$new_terms[] = $term;
+
+			}
+
+		}
+
+		// do we have any *new* terms?
+		if ( count( $new_terms ) > 0 ) {
+
+			// get sanitised term IDs
+			$new_term_ids = $this->sanitise_comment_terms( $new_terms );
+
+		}
+
+		// combine arrays
+		$term_ids = array_unique( array_merge( $existing_term_ids, $new_term_ids ) );
+
+		// did we get any?
+		if ( ! empty( $term_ids ) ) {
+
+			// overwrite with new terms
+			wp_set_object_terms( $comment_id, $term_ids, COMMENT_TAGGER_TAX, false );
+
+		}
+
+	}
+
+
+
+	/**
 	 * Save data returned by our comment meta box
 	 *
 	 * @param int $comment_id The ID of the comment being saved
 	 * @return void
 	 */
-	function save_comment_terms( $comment_id ) {
+	public function update_comment_terms( $comment_id ) {
 
 		$tax = get_taxonomy( COMMENT_TAGGER_TAX );
 
 		// make sure the user can assign terms
 		if ( ! current_user_can( $tax->cap->assign_terms ) ) return;
 
+		// init "existing" and "new" arrays
+		$existing_term_ids = array();
+		$new_term_ids = array();
+
 		// do we have any *existing* terms?
 		if ( isset( $_POST['tax_input'][COMMENT_TAGGER_TAX] ) ) {
 
 			// get sanitised term IDs
 			$existing_term_ids = $this->sanitise_comment_terms( $_POST['tax_input'][COMMENT_TAGGER_TAX] );
-
-			// did we get any?
-			if ( ! empty( $existing_term_ids ) ) {
-
-				// save them
-				wp_set_object_terms( $comment_id, $existing_term_ids, COMMENT_TAGGER_TAX, false );
-
-			}
 
 		}
 
@@ -517,13 +608,16 @@ class Comment_Tagger {
 			// get sanitised term IDs
 			$new_term_ids = $this->sanitise_comment_terms( $_POST['newtag'][COMMENT_TAGGER_TAX] );
 
-			// did we get any?
-			if ( ! empty( $new_term_ids ) ) {
+		}
 
-				// save them
-				wp_set_object_terms( $comment_id, $new_term_ids, COMMENT_TAGGER_TAX, false );
+		// combine arrays
+		$term_ids = array_unique( array_merge( $existing_term_ids, $new_term_ids ) );
 
-			}
+		// did we get any?
+		if ( ! empty( $term_ids ) ) {
+
+			// overwrite with new terms
+			wp_set_object_terms( $comment_id, $term_ids, COMMENT_TAGGER_TAX, false );
 
 		}
 
@@ -622,6 +716,107 @@ class Comment_Tagger {
 
 		wp_delete_object_term_relationships( $comment_id, COMMENT_TAGGER_TAX );
 		clean_object_term_cache( $comment_id, COMMENT_TAGGER_TAX );
+
+	}
+
+
+
+	/**
+	 * Show front-end version of tags metabox in CommentPress
+	 *
+	 * @return void
+	 */
+	public function front_end_markup() {
+
+		// only our taxonomy
+		$taxonomies = array( COMMENT_TAGGER_TAX );
+
+		// config
+		$args = array(
+			'orderby' => 'count',
+			'order' => 'DESC',
+			'number' => 5,
+		);
+
+		// get top 5 most used tags
+		$tags = get_terms( $taxonomies, $args );
+
+		// construct default options for Select2
+		$most_used_tags_array = array();
+		foreach( $tags AS $tag ) {
+			$most_used_tags_array[] = '<option value="' . COMMENT_TAGGER_PREFIX . '-' . $tag->term_id . '">' . esc_html( $tag->name ) . '</option>';
+		}
+		$most_used_tags = implode( "\n", $most_used_tags_array );
+
+		// use Select2 in "tag" mode
+		echo '<div class="comment_tagger_select2_container">
+				<h5>' . __( 'Tag this comment', 'comment-tagger' ) . '</h5>
+				<select class="comment_tagger_select2" name="comment_tagger_tags[]" id="comment_tagger_tags" multiple="multiple" style="width: 100%;">
+					' . $most_used_tags . '
+				</select>
+			 </div>';
+
+	}
+
+
+
+	/**
+	 * Add our front-end stylesheets
+	 *
+	 * @return void
+	 */
+	public function front_end_enqueue_styles() {
+
+		// register Select2 styles
+		wp_register_style(
+			'comment_tagger_select2_css',
+			set_url_scheme( 'http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css' )
+		);
+
+		// enqueue Select2 styles
+		wp_enqueue_style( 'comment_tagger_select2_css' );
+
+	}
+
+
+
+	/**
+	 * Add our front-end Javascripts
+	 *
+	 * @return void
+	 */
+	public function front_end_enqueue_scripts() {
+
+		// register Select2
+		wp_register_script(
+			'comment_tagger_select2_js',
+			set_url_scheme( 'http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js' ),
+			array( 'jquery' )
+		);
+
+		// enqueue Select2
+		wp_enqueue_script( 'comment_tagger_select2_js' );
+
+		// enqueue js
+		wp_enqueue_script(
+			'comment_tagger_select2_custom_js',
+			plugin_dir_url( __FILE__ ) . 'assets/js/comment-tagger.js',
+			array( 'comment_tagger_select2_js' ),
+			COMMENT_TAGGER_VERSION
+		);
+
+		// localisation array
+		$vars = array(
+			'localisation' => array(),
+			'data' => array(),
+		);
+
+		// localise with wp function
+		wp_localize_script(
+			'comment_tagger_select2_custom_js',
+			'CommentTaggerSettings',
+			$vars
+		);
 
 	}
 
