@@ -1,7 +1,7 @@
 Comment Tagger
 ==============
 
-The *Comment Tagger* plugin lets logged-in readers tag comments. The plugin is intended to work with [*CommentPress Core*](https://wordpress.org/plugins/commentpress-core/) but can (with some effort) be used elsewhere. Please bear in mind that this plugin is at a very early stage of development.
+The *Comment Tagger* plugin lets logged-in readers tag comments. The plugin is intended to work with [*CommentPress Core*](https://wordpress.org/plugins/commentpress-core/) but can (with some effort) be used elsewhere. Please bear in mind that this plugin is at an early stage of development.
 
 ## Installation ##
 
