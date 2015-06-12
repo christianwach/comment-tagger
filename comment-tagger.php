@@ -117,10 +117,34 @@ class Comment_Tagger {
 		add_filter( 'get_comment_text', array( $this, 'front_end_tags' ), 10, 2 );
 
 		// add UI to CommentPress comments
-		add_action( 'commentpress_comment_form_pre_comment_id_fields', array( $this, 'front_end_markup' ) );
+		add_filter( 'comment_id_fields', array( $this, 'front_end_markup' ) );
+
+		// optionally replace with CommentPress comment hooks
+		add_action( 'commentpress_loaded', array( $this, 'commentpress_loaded' ) );
 
 		// fwiw, broadcast to other plugins
 		do_action( 'comment_tagger_loaded' );
+
+	}
+
+
+
+	/**
+	 * Check if CommentPress is loaded
+	 *
+	 * @return void
+	 */
+	public function commentpress_loaded() {
+
+		// remove WordPress hooks
+		remove_filter( 'get_comment_text', array( $this, 'front_end_tags' ), 10, 2 );
+		remove_filter( 'comment_id_fields', array( $this, 'front_end_markup' ) );
+
+		// add tags to comment content
+		add_filter( 'commentpress_comment_identifier_append', array( $this, 'front_end_tags' ), 10, 2 );
+
+		// add UI to CommentPress comments
+		add_action( 'commentpress_comment_form_pre_comment_id_fields', array( $this, 'front_end_markup_commentpress' ) );
 
 	}
 
@@ -716,20 +740,20 @@ class Comment_Tagger {
 	/**
 	 * Show tags on front-end, appended to comment text
 	 *
-	 * @param str $comment_text The comment content
+	 * @param str $text The content to prepend to the comment identifer
 	 * @param object $comment The WordPress comment object
 	 * @return void
 	 */
-	public function front_end_tags( $comment_text, $comment ) {
+	public function front_end_tags( $text, $comment ) {
 
 		// sanity check
-		if ( ! isset( $comment->comment_ID ) ) return $comment_text;
+		if ( ! isset( $comment->comment_ID ) ) return $text;
 
 		// get terms for this comment
 		$terms = wp_get_object_terms( $comment->comment_ID, COMMENT_TAGGER_TAX );
 
 		// bail if empty
-		if ( count( $terms ) === 0 ) return $comment_text;
+		if ( count( $terms ) === 0 ) return $text;
 
 		// init tag list
 		$tag_list = array();
@@ -752,26 +776,27 @@ class Comment_Tagger {
 			}
 
 			// wrap in identifying div
-			$tags = '<div class="comment_tagger_tags"><p>' . __( 'Tagged: ' ) . implode( ' ', $tag_list ) . '</p></div>';
+			$tags = '<div class="comment_tagger_tags"><p>' . __( 'Tagged: ' ) . implode( ' ', $tag_list ) . "</p></div>\n\n";
 
 			// prepend to text
-			$comment_text = $tags . $comment_text;
+			$text = $tags . $text;
 
 		}
 
 		// --<
-		return $comment_text;
+		return $text;
 
 	}
 
 
 
 	/**
-	 * Show front-end version of tags metabox in CommentPress
+	 * Show front-end version of tags metabox
 	 *
+	 * @param str $content The existing content
 	 * @return void
 	 */
-	public function front_end_markup() {
+	public function front_end_markup( $content = '' ) {
 
 		// only our taxonomy
 		$taxonomies = array( COMMENT_TAGGER_TAX );
@@ -794,12 +819,29 @@ class Comment_Tagger {
 		$most_used_tags = implode( "\n", $most_used_tags_array );
 
 		// use Select2 in "tag" mode
-		echo '<div class="comment_tagger_select2_container">
+		$html = '<div class="comment_tagger_select2_container">
 				<h5>' . __( 'Tag this comment', 'comment-tagger' ) . '</h5>
 				<select class="comment_tagger_select2" name="comment_tagger_tags[]" id="comment_tagger_tags" multiple="multiple" style="width: 100%;">
 					' . $most_used_tags . '
 				</select>
 			 </div>';
+
+		// --<
+		return $content . $html;
+
+	}
+
+
+
+	/**
+	 * Show front-end version of tags metabox in CommentPress
+	 *
+	 * @return void
+	 */
+	public function front_end_markup_commentpress() {
+
+		// get content and echo
+		echo $this->front_end_markup();
 
 	}
 
