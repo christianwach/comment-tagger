@@ -820,11 +820,16 @@ class Comment_Tagger {
 
 		// use Select2 in "tag" mode
 		$html = '<div class="comment_tagger_select2_container">
-				<h5>' . __( 'Tag this comment', 'comment-tagger' ) . '</h5>
-				<select class="comment_tagger_select2" name="comment_tagger_tags[]" id="comment_tagger_tags" multiple="multiple" style="width: 100%;">
-					' . $most_used_tags . '
-				</select>
-			 </div>';
+					<h5 class="comment_tagger_select2_heading">' . __( 'Tag this comment', 'comment-tagger' ) . '</h5>
+					<p class="comment_tagger_select2_description">' .
+						__( 'Select from existing tags or add your own.', 'comment-tagger' ) .
+						'<br />' .
+						__( 'Separate new tags with a comma.', 'comment-tagger' ) .
+					'</p>
+					<select class="comment_tagger_select2" name="comment_tagger_tags[]" id="comment_tagger_tags" multiple="multiple" style="width: 100%;">
+						' . $most_used_tags . '
+					</select>
+				 </div>';
 
 		// --<
 		return $content . $html;
