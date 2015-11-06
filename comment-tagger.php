@@ -130,7 +130,7 @@ class Comment_Tagger {
 
 
 	/**
-	 * Check if CommentPress is loaded
+	 * Customise CommentPress when it is loaded
 	 *
 	 * @return void
 	 */
