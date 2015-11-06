@@ -70,6 +70,36 @@ class Comment_Tagger {
 
 
 	/**
+	 * Actions to perform on plugin activation
+	 *
+	 * @since 0.1.1
+	 * @return void
+	 */
+	public function activate() {
+
+		// flush rules
+		flush_rewrite_rules();
+
+	}
+
+
+
+	/**
+	 * Actions to perform on plugin deactivation (NOT deletion)
+	 *
+	 * @since 0.1.1
+	 * @return void
+	 */
+	public function deactivate() {
+
+		// flush rules
+		flush_rewrite_rules();
+
+	}
+
+
+
+	/**
 	 * Register the hooks that our plugin needs
 	 *
 	 * @return void
@@ -929,6 +959,12 @@ function comment_tagger() {
 
 // init Comment Tagger
 comment_tagger();
+
+// activation
+register_activation_hook( __FILE__, array( comment_tagger(), 'activate' ) );
+
+// deactivation
+register_deactivation_hook( __FILE__, array( comment_tagger(), 'deactivate' ) );
 
 
 
