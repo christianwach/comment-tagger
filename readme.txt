@@ -2,9 +2,9 @@
 Contributors: needle
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8MZNB9D3PF48S
 Tags: comments, tagging, taxonomy, commentpress
-Requires at least: 4.1
-Tested up to: 4.2
-Stable tag: 0.1
+Requires at least: 4.3
+Tested up to: 4.4
+Stable tag: 0.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
