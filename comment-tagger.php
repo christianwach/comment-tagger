@@ -1100,6 +1100,148 @@ function comment_tagger_get_tagged_comments() {
 
 
 /**
+ * General tagged comments page display function.
+ *
+ * Use this function asa starting point to adapt this plugin to your theme.
+ *
+ * @return str $html The comments
+ */
+function comment_tagger_get_tagged_comments_content() {
+
+	// init output
+	$html = '';
+
+	// get all comments for this archive
+	$all_comments = comment_tagger_get_tagged_comments();
+
+	// kick out if none
+	if ( count( $all_comments ) == 0 ) return $html;
+
+	// build list of posts to which they are attached
+	$posts_with = array();
+	$post_comment_counts = array();
+	foreach( $all_comments AS $comment ) {
+
+		// add to posts with comments array
+		if ( ! in_array( $comment->comment_post_ID, $posts_with ) ) {
+			$posts_with[] = $comment->comment_post_ID;
+		}
+
+		// increment counter
+		if ( ! isset( $post_comment_counts[$comment->comment_post_ID] ) ) {
+			$post_comment_counts[$comment->comment_post_ID] = 1;
+		} else {
+			$post_comment_counts[$comment->comment_post_ID]++;
+		}
+
+	}
+
+	// kick out if none
+	if ( count( $posts_with ) == 0 ) return $html;
+
+	// create args
+	$args = array(
+		'orderby' => 'comment_count',
+		'order' => 'DESC',
+		'post_type' => 'any',
+		'post__in' => $posts_with,
+		'posts_per_page' => 1000000,
+		'ignore_sticky_posts' => 1,
+		'post_status' => array( 'publish', 'inherit' )
+	);
+
+	// create query
+	$query = new WP_Query( $args );
+
+	// did we get any?
+	if ( $query->have_posts() ) {
+
+		// open ul
+		$html .= '<ul class="comment_tagger_posts">' . "\n";
+
+		while ( $query->have_posts() ) {
+
+			$query->the_post();
+
+			// open li
+			$html .= '<li class="comment_tagger_post">' . "\n";
+
+			// define comment count
+			$comment_count_text = sprintf( _n(
+
+				// singular
+				'<span class="comment_tagger_count">%d</span> comment',
+
+				// plural
+				'<span class="comment_tagger_count">%d</span> comments',
+
+				// number
+				$post_comment_counts[get_the_ID()],
+
+				// domain
+				'comment-tagger'
+
+			// substitution
+			), $post_comment_counts[get_the_ID()] );
+
+			// show it
+			$html .= '<h4>' . get_the_title() . ' <span>(' . $comment_count_text . ')</span></h4>' . "\n";
+
+			// open comments div
+			$html .= '<div class="comment_tagger_comments">' . "\n";
+
+			// check for password-protected
+			if ( post_password_required( get_the_ID() ) ) {
+
+				// add notice
+				$html .= '<div class="comment_tagger_notice">' . __( 'Password protected', 'comment-tagger' ) . '</div>' . "\n";
+
+			} else {
+
+				// build array of comments for this post
+				$comments_to_show = array();
+				foreach( $all_comments AS $comment ) {
+					if ( $comment->comment_post_ID == get_the_ID() ) {
+						$comments_to_show[] = $comment;
+					}
+				}
+
+				// open list if we have some
+				if ( ! empty( $comments_to_show ) ) $html .= '<ul>' . "\n";
+
+				// add to output
+				$html .= wp_list_comments( array( 'echo' => false ), $comments_to_show );
+
+				// close list if we have some
+				if ( ! empty( $comments_to_show ) ) $html .= '</ul>' . "\n";
+
+			}
+
+			// close li
+			// close item div
+			$html .= '</div>'."\n";
+
+			// close li
+			$html .= '</li>'."\n";
+
+		}
+
+		// close ul
+		$html .= '</ul>'."\n";
+
+		// reset
+		wp_reset_postdata();
+
+	} // end have_posts()
+
+	// --<
+	return $html;
+
+}
+
+
+
+/**
  * Tagged comments page display function specifically designed for CommentPress
  *
  * @return str $html The comments
