@@ -245,7 +245,7 @@ class Comment_Tagger {
 
 				// permalinks
 				'rewrite' => array(
-					'with_front' => true,
+					//'with_front' => true,
 					'slug' => apply_filters( 'comment_tagger_tax_slug', 'comments/tags' )
 				),
 
@@ -885,18 +885,30 @@ class Comment_Tagger {
 	/**
 	 * Add our front-end stylesheets
 	 *
+	 * Currently using the 4.0.0 version of Select2. The incuded directory is a
+	 * copy of the 'dist' directory
+	 * @see https://github.com/select2/select2/tags
+	 *
 	 * @return void
 	 */
 	public function front_end_enqueue_styles() {
 
-		// register Select2 styles
-		wp_register_style(
-			'comment_tagger_select2_css',
-			set_url_scheme( 'http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css' )
-		);
+		// default to minified scripts
+		$debug = '.min';
 
-		// enqueue Select2 styles
-		wp_enqueue_style( 'comment_tagger_select2_css' );
+		// use uncompressed scripts when debugging
+		if ( defined( 'SCRIPT_DEBUG' ) AND SCRIPT_DEBUG === true ) {
+			$debug = '';
+		}
+
+		// enqueue Select2 stylesheet
+		wp_enqueue_style(
+			'comment_tagger_select2_css',
+			plugin_dir_url( __FILE__ ) . 'assets/external/select2/css/select2' . $debug . '.css',
+			false,
+			COMMENT_TAGGER_VERSION, // version
+			'all' // media
+		);
 
 	}
 
@@ -905,21 +917,31 @@ class Comment_Tagger {
 	/**
 	 * Add our front-end Javascripts
 	 *
+	 * Currently using the 4.0.0 version of Select2. The incuded directory is a
+	 * copy of the 'dist' directory
+	 * @see https://github.com/select2/select2/tags
+	 *
 	 * @return void
 	 */
 	public function front_end_enqueue_scripts() {
 
-		// register Select2
-		wp_register_script(
-			'comment_tagger_select2_js',
-			set_url_scheme( 'http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js' ),
-			array( 'jquery' )
-		);
+		// default to minified scripts
+		$debug = '.min';
+
+		// use uncompressed scripts when debugging
+		if ( defined( 'SCRIPT_DEBUG' ) AND SCRIPT_DEBUG === true ) {
+			$debug = '';
+		}
 
 		// enqueue Select2
-		wp_enqueue_script( 'comment_tagger_select2_js' );
+		wp_enqueue_script(
+			'comment_tagger_select2_js',
+			plugin_dir_url( __FILE__ ) . 'assets/external/select2/js/select2' . $debug . '.js',
+			array( 'jquery' ),
+			COMMENT_TAGGER_VERSION
+		);
 
-		// enqueue js
+		// enqueue our custom Javascript
 		wp_enqueue_script(
 			'comment_tagger_select2_custom_js',
 			plugin_dir_url( __FILE__ ) . 'assets/js/comment-tagger.js',
