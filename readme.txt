@@ -28,9 +28,15 @@ This plugin is in active development. For feature requests and bug reports (or i
 1. Upload plugin files to your `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 
+If you visit a Comment Tag Archive page and get a "Page Not Found" message, visit your Permalinks Settings page to refresh the WordPress rewrite rules.
+
 
 
 == Changelog ==
+
+= 0.1.1 =
+
+Switch to local version of Select2 library
 
 = 0.1 =
 
