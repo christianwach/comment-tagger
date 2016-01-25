@@ -1088,7 +1088,16 @@ function comment_tagger_get_tagged_comments() {
 
 		// do the query
 		$comments = $comments_query->query( $args );
-		//print_r( $comments ); //die();
+
+		/*
+		print_r( array(
+			'comment_term_id' => $comment_term_id,
+			'comment_term' => $comment_term,
+			'tagged_comments' => $tagged_comments,
+			'args' => $args,
+			'comments' => $comments,
+		) ); die();
+		*/
 
 	}
 
