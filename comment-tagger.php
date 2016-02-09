@@ -2,7 +2,7 @@
 --------------------------------------------------------------------------------
 Plugin Name: Comment Tagger
 Description: Lets logged-in readers tag comments.
-Version: 0.1.1
+Version: 0.1.2
 Author: Christian Wach
 Author URI: http://haystack.co.uk
 Plugin URI: https://github.com/christianwach/comment-tagger
@@ -14,7 +14,7 @@ Domain Path: /languages
 
 
 // define version (bumping this refreshes CSS and JS)
-define( 'COMMENT_TAGGER_VERSION', '0.1.1' );
+define( 'COMMENT_TAGGER_VERSION', '0.1.2' );
 
 // define taxonomy name
 if ( ! defined( 'COMMENT_TAGGER_TAX' ) ) {
