@@ -139,6 +139,9 @@ class Comment_Tagger {
 		// intercept comment save process
 		add_action( 'comment_post', array( $this, 'intercept_comment_save' ), 20, 2 );
 
+		// allow comment authors to assign terms
+		add_filter( 'map_meta_cap', array( $this, 'enable_comment_terms' ), 10, 4 );
+
 		// intercept comment edit process
 		add_action( 'edit_comment', array( $this, 'update_comment_terms' ) );
 
@@ -265,15 +268,13 @@ class Comment_Tagger {
 					'slug' => apply_filters( 'comment_tagger_tax_slug', 'comments/tags' )
 				),
 
-				/*
 				// capabilities
 				'capabilities' => array(
-					'manage_terms' => 'edit_users', // Using 'edit_users' cap to keep this simple.
-					'edit_terms' => 'edit_users',
-					'delete_terms' => 'edit_users',
-					'assign_terms' => 'read',
+					'manage_terms' => 'manage_categories',
+					'edit_terms' => 'manage_categories',
+					'delete_terms' => 'manage_categories',
+					'assign_terms' => 'assign_' . COMMENT_TAGGER_TAX,
 				),
-				*/
 
 				// custom function to update the count
 				'update_count_callback' => array( $this, 'update_tag_count' ),
@@ -660,6 +661,34 @@ class Comment_Tagger {
 
 
 	/**
+	 * Add capability to assing tags.
+	 *
+	 * @since 0.1.2
+	 *
+	 * @param array $caps The existing capabilities array for the WordPress user
+	 * @param str $cap The capability in question
+	 * @param int $user_id The numerical ID of the WordPress user
+	 * @param array $args The additional arguments
+	 * @return array $caps The modified capabilities array for the WordPress user
+	 */
+	public function enable_comment_terms( $caps, $cap, $user_id, $args ) {
+
+		// only apply this to queries for edit_comment cap
+		if ( 'assign_' . COMMENT_TAGGER_TAX == $cap ) {
+
+			// always allow
+			$caps = array( 'exist' );
+
+		}
+
+		// --<
+		return $caps;
+
+	}
+
+
+
+	/**
 	 * Save data returned by our comment meta box.
 	 *
 	 * @since 0.1
@@ -669,6 +698,7 @@ class Comment_Tagger {
 	 */
 	public function update_comment_terms( $comment_id ) {
 
+		// get our taxonomy
 		$tax = get_taxonomy( COMMENT_TAGGER_TAX );
 
 		// make sure the user can assign terms
@@ -1047,8 +1077,13 @@ register_deactivation_hook( __FILE__, array( comment_tagger(), 'deactivate' ) );
 /**
  * This is a clone of `post_tags_meta_box` which is usually used to display post
  * tags form fields. It has been modified so that the terms are assigned to the
- * comment not the post. There's a to-do note on the original that suggests that
- * it should be made more compatible with general taxonomies...
+ * comment not the post. The capability check has also been changed to see if a
+ * user can edit the comment - this may be changed to assign custom capabilities
+ * to the taxonomy itself and then use the 'map_meta_caps' filter to make the
+ * decision.
+ *
+ * NB: there's a to-do note on the original that suggests that it should be made
+ * more compatible with general taxonomies...
  *
  * @todo Create taxonomy-agnostic wrapper for this.
  *
@@ -1075,6 +1110,7 @@ function comment_tagger_post_tags_meta_box( $post, $box ) {
 	// access comment
 	global $comment;
 
+	// parse the passed in arguments
 	$defaults = array( 'taxonomy' => 'post_tag' );
 	if ( ! isset( $box['args'] ) || ! is_array( $box['args'] ) ) {
 		$args = array();
@@ -1082,6 +1118,8 @@ function comment_tagger_post_tags_meta_box( $post, $box ) {
 		$args = $box['args'];
 	}
 	$r = wp_parse_args( $args, $defaults );
+
+	// get taxonomy data
 	$tax_name = esc_attr( $r['taxonomy'] );
 	$taxonomy = get_taxonomy( $r['taxonomy'] );
 	$user_can_assign_terms = current_user_can( $taxonomy->cap->assign_terms );
