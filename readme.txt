@@ -34,6 +34,10 @@ If you visit a Comment Tag Archive page and get a "Page Not Found" message, visi
 
 == Changelog ==
 
+= 0.1.2 =
+
+Allow comment authors to assign terms in WP Admin
+
 = 0.1.1 =
 
 Switch to local version of Select2 library
