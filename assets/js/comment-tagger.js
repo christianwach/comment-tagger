@@ -13,7 +13,9 @@ NOTES
 
 
 /**
- * Create global namespace
+ * Create global namespace.
+ *
+ * @since 0.1
  */
 var CommentTagger = CommentTagger || {};
 
@@ -24,9 +26,11 @@ var CommentTagger = CommentTagger || {};
 
 
 /**
- * Create settings class
+ * Create settings class.
  *
  * Unused at present, but kept as a useful template.
+ *
+ * @since 0.1
  */
 CommentTagger.settings = new function() {
 
@@ -65,7 +69,9 @@ CommentTagger.settings = new function() {
 
 
 /**
- * Create comments class
+ * Create comments class.
+ *
+ * @since 0.1
  */
 CommentTagger.comments = new function() {
 
@@ -78,6 +84,8 @@ CommentTagger.comments = new function() {
 	 *
 	 * This method should only be called once.
 	 *
+	 * @since 0.1
+	 *
 	 * @return void
 	 */
 	this.init = function() {
@@ -88,6 +96,8 @@ CommentTagger.comments = new function() {
 	 * Do setup when jQuery reports that the DOM is ready.
 	 *
 	 * This method should only be called once.
+	 *
+	 * @since 0.1
 	 *
 	 * @return void
 	 */
@@ -108,7 +118,9 @@ CommentTagger.comments = new function() {
 
 
 /**
- * Create comments Select2 class
+ * Create comments Select2 class.
+ *
+ * @since 0.1
  */
 CommentTagger.comments.select2 = new function() {
 
@@ -117,7 +129,9 @@ CommentTagger.comments.select2 = new function() {
 		$ = jQuery.noConflict();
 
 	/**
-	 * Select2 init
+	 * Select2 init.
+	 *
+	 * @since 0.1
 	 */
 	this.init = function() {
 
@@ -133,12 +147,16 @@ CommentTagger.comments.select2 = new function() {
 	};
 
 	/**
-	 * Select2 listeners
+	 * Select2 listeners.
+	 *
+	 * @since 0.1
 	 */
 	this.listeners = function() {
 
 		/**
-		 * Hook into CommentPress AJAX new comment added
+		 * Hook into CommentPress AJAX new comment added.
+		 *
+		 * @since 0.1
 		 *
 		 * @param object event The event (unused)
 		 * @param int comment_id The new comment ID
@@ -174,7 +192,9 @@ CommentTagger.comments.init();
 
 
 /**
- * Define what happens when the page is ready
+ * Define what happens when the page is ready.
+ *
+ * @since 0.1
  *
  * @return void
  */

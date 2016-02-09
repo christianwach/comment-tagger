@@ -32,17 +32,21 @@ if ( ! defined( 'COMMENT_TAGGER_PREFIX' ) ) {
 
 
 
-/*
---------------------------------------------------------------------------------
-Comment_Tagger Class
---------------------------------------------------------------------------------
-*/
+/**
+ * Comment Tagger class.
+ *
+ * A class for encapsulating plugin functionality.
+ *
+ * @since 0.1
+ */
 class Comment_Tagger {
 
 
 
 	/**
-	 * Returns a single instance of this object when called
+	 * Returns a single instance of this object when called.
+	 *
+	 * @since 0.1
 	 *
 	 * @return object $instance Comment_Tagger instance
 	 */
@@ -70,9 +74,10 @@ class Comment_Tagger {
 
 
 	/**
-	 * Actions to perform on plugin activation
+	 * Actions to perform on plugin activation.
 	 *
 	 * @since 0.1.1
+	 *
 	 * @return void
 	 */
 	public function activate() {
@@ -85,9 +90,12 @@ class Comment_Tagger {
 
 
 	/**
-	 * Actions to perform on plugin deactivation (NOT deletion)
+	 * Actions to perform on plugin deactivation.
+	 *
+	 * For actions that are performed on plugin deletion, see 'uninstall.php'
 	 *
 	 * @since 0.1.1
+	 *
 	 * @return void
 	 */
 	public function deactivate() {
@@ -100,7 +108,9 @@ class Comment_Tagger {
 
 
 	/**
-	 * Register the hooks that our plugin needs
+	 * Register the hooks that our plugin needs.
+	 *
+	 * @since 0.1
 	 *
 	 * @return void
 	 */
@@ -160,7 +170,9 @@ class Comment_Tagger {
 
 
 	/**
-	 * Customise CommentPress when it is loaded
+	 * Customise CommentPress when it is loaded.
+	 *
+	 * @since 0.1
 	 *
 	 * @return void
 	 */
@@ -181,10 +193,12 @@ class Comment_Tagger {
 
 
 	/**
-	 * Load translation files
+	 * Load translation files.
 	 *
 	 * A good reference on how to implement translation in WordPress:
 	 * http://ottopress.com/2012/internationalization-youre-probably-doing-it-wrong/
+	 *
+	 * @since 0.1
 	 *
 	 * @return void
 	 */
@@ -209,7 +223,9 @@ class Comment_Tagger {
 
 
 	/**
-	 * Create a free-tagging taxonomy for comments
+	 * Create a free-tagging taxonomy for comments.
+	 *
+	 * @since 0.1
 	 *
 	 * @return void
 	 */
@@ -275,7 +291,9 @@ class Comment_Tagger {
 
 
 	/**
-	 * Force update the number of comments for a taxonomy term
+	 * Force update the number of comments for a taxonomy term.
+	 *
+	 * @since 0.1
 	 *
 	 * @return void
 	 */
@@ -293,9 +311,11 @@ class Comment_Tagger {
 
 
 	/**
-	 * Manually update the number of comments for a taxonomy term
+	 * Manually update the number of comments for a taxonomy term.
 	 *
 	 * @see	_update_post_term_count()
+	 *
+	 * @since 0.1
 	 *
 	 * @param array $terms List of Term taxonomy IDs
 	 * @param object $taxonomy Current taxonomy object of terms
@@ -334,6 +354,8 @@ class Comment_Tagger {
 	/**
 	 * Creates the admin page for the taxonomy under the 'Comments' menu.
 	 *
+	 * @since 0.1
+	 *
 	 * @return void
 	 */
 	public function admin_page() {
@@ -354,7 +376,9 @@ class Comment_Tagger {
 
 
 	/**
-	 * Enqueue CSS in WP admin to tweak the appearance of various elements
+	 * Enqueue CSS in WP admin to tweak the appearance of various elements.
+	 *
+	 * @since 0.1
 	 *
 	 * @return void
 	 */
@@ -389,10 +413,12 @@ class Comment_Tagger {
 
 
 	/**
-	 * Fix a bug with highlighting the parent menu item
+	 * Fix a bug with highlighting the parent menu item.
 	 *
 	 * By default, when on the edit taxonomy page for a user taxonomy, the "Posts" tab
-	 * is highlighted. This will correct that bug
+	 * is highlighted. This will correct that bug.
+	 *
+	 * @since 0.1
 	 *
 	 * @param string $parent The existing parent menu item
 	 * @return string $parent The modified parent menu item
@@ -414,7 +440,9 @@ class Comment_Tagger {
 
 
 	/**
-	 * Correct the column name for comment taxonomies - replace "Posts" with "Comments"
+	 * Correct the column name for comment taxonomies - replace "Posts" with "Comments".
+	 *
+	 * @since 0.1
 	 *
 	 * @param array $columns An array of columns to be shown in the manage terms table
 	 * @return array $columns Modified array of columns to be shown in the manage terms table
@@ -433,7 +461,9 @@ class Comment_Tagger {
 
 
 	/**
-	 * Set values for custom columns in comment taxonomies
+	 * Set values for custom columns in comment taxonomies.
+	 *
+	 * @since 0.1
 	 *
 	 * @param string $display WP just passes an empty string here.
 	 * @param string $column The name of the custom column.
@@ -452,7 +482,9 @@ class Comment_Tagger {
 
 
 	/**
-	 * Register a meta box for the comment edit screen
+	 * Register a meta box for the comment edit screen.
+	 *
+	 * @since 0.1
 	 *
 	 * @return void
 	 */
@@ -474,7 +506,9 @@ class Comment_Tagger {
 
 
 	/**
-	 * Add a meta box to the comment edit screen
+	 * Add a meta box to the comment edit screen.
+	 *
+	 * @since 0.1
 	 *
 	 * @return void
 	 */
@@ -556,7 +590,9 @@ class Comment_Tagger {
 
 
 	/**
-	 * Intercept the comment save process and maybe update terms
+	 * Intercept the comment save process and maybe update terms.
+	 *
+	 * @since 0.1
 	 *
 	 * @param int $comment_id The numeric ID of the comment
 	 * @param str $comment_status The status of the comment
@@ -624,7 +660,9 @@ class Comment_Tagger {
 
 
 	/**
-	 * Save data returned by our comment meta box
+	 * Save data returned by our comment meta box.
+	 *
+	 * @since 0.1
 	 *
 	 * @param int $comment_id The ID of the comment being saved
 	 * @return void
@@ -675,7 +713,9 @@ class Comment_Tagger {
 
 
 	/**
-	 * Sanitise comment terms
+	 * Sanitise comment terms.
+	 *
+	 * @since 0.1
 	 *
 	 * @param mixed $raw_terms The term names as retrieved from $_POST
 	 * @return void
@@ -753,7 +793,9 @@ class Comment_Tagger {
 
 
 	/**
-	 * Delete comment terms when a comment is deleted
+	 * Delete comment terms when a comment is deleted.
+	 *
+	 * @since 0.1
 	 *
 	 * @param int $comment_id The ID of the comment being saved
 	 * @return void
@@ -768,7 +810,9 @@ class Comment_Tagger {
 
 
 	/**
-	 * Show tags on front-end, appended to comment text
+	 * Show tags on front-end, appended to comment text.
+	 *
+	 * @since 0.1
 	 *
 	 * @param str $text The content to prepend to the comment identifer
 	 * @param object $comment The WordPress comment object
@@ -821,7 +865,9 @@ class Comment_Tagger {
 
 
 	/**
-	 * Show front-end version of tags metabox
+	 * Show front-end version of tags metabox.
+	 *
+	 * @since 0.1
 	 *
 	 * @param str $content The existing content
 	 * @return void
@@ -869,7 +915,9 @@ class Comment_Tagger {
 
 
 	/**
-	 * Show front-end version of tags metabox in CommentPress
+	 * Show front-end version of tags metabox in CommentPress.
+	 *
+	 * @since 0.1
 	 *
 	 * @return void
 	 */
@@ -883,11 +931,13 @@ class Comment_Tagger {
 
 
 	/**
-	 * Add our front-end stylesheets
+	 * Add our front-end stylesheets.
 	 *
 	 * Currently using the 4.0.0 version of Select2. The incuded directory is a
 	 * copy of the 'dist' directory
 	 * @see https://github.com/select2/select2/tags
+	 *
+	 * @since 0.1
 	 *
 	 * @return void
 	 */
@@ -915,11 +965,13 @@ class Comment_Tagger {
 
 
 	/**
-	 * Add our front-end Javascripts
+	 * Add our front-end Javascripts.
 	 *
 	 * Currently using the 4.0.0 version of Select2. The incuded directory is a
 	 * copy of the 'dist' directory
 	 * @see https://github.com/select2/select2/tags
+	 *
+	 * @since 0.1
 	 *
 	 * @return void
 	 */
@@ -971,7 +1023,9 @@ class Comment_Tagger {
 
 
 /**
- * Instantiate plugin object
+ * Instantiate plugin object.
+ *
+ * @since 0.1
  *
  * @return object the plugin instance
  */
@@ -999,6 +1053,8 @@ register_deactivation_hook( __FILE__, array( comment_tagger(), 'deactivate' ) );
  * @todo Create taxonomy-agnostic wrapper for this.
  *
  * @see post_tags_meta_box
+ *
+ * @since 0.1
  *
  * @param WP_Post $post Post object.
  * @param array   $box {
@@ -1056,7 +1112,9 @@ function comment_tagger_post_tags_meta_box( $post, $box ) {
 
 
 /**
- * Utility function to get tagged comments for a taxonomy archive page
+ * Utility function to get tagged comments for a taxonomy archive page.
+ *
+ * @since 0.1
  *
  * @return array $comments The comments
  */
@@ -1112,6 +1170,8 @@ function comment_tagger_get_tagged_comments() {
  * General tagged comments page display function.
  *
  * Use this function asa starting point to adapt this plugin to your theme.
+ *
+ * @since 0.1
  *
  * @return str $html The comments
  */
@@ -1251,7 +1311,9 @@ function comment_tagger_get_tagged_comments_content() {
 
 
 /**
- * Tagged comments page display function specifically designed for CommentPress
+ * Tagged comments page display function specifically designed for CommentPress.
+ *
+ * @since 0.1
  *
  * @return str $html The comments
  */
