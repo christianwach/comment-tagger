@@ -77,8 +77,6 @@ class Comment_Tagger {
 	 * Actions to perform on plugin activation.
 	 *
 	 * @since 0.1.1
-	 *
-	 * @return void
 	 */
 	public function activate() {
 
@@ -95,8 +93,6 @@ class Comment_Tagger {
 	 * For actions that are performed on plugin deletion, see 'uninstall.php'
 	 *
 	 * @since 0.1.1
-	 *
-	 * @return void
 	 */
 	public function deactivate() {
 
@@ -111,8 +107,6 @@ class Comment_Tagger {
 	 * Register the hooks that our plugin needs.
 	 *
 	 * @since 0.1
-	 *
-	 * @return void
 	 */
 	private function register_hooks() {
 
@@ -176,8 +170,6 @@ class Comment_Tagger {
 	 * Customise CommentPress when it is loaded.
 	 *
 	 * @since 0.1
-	 *
-	 * @return void
 	 */
 	public function commentpress_loaded() {
 
@@ -202,8 +194,6 @@ class Comment_Tagger {
 	 * http://ottopress.com/2012/internationalization-youre-probably-doing-it-wrong/
 	 *
 	 * @since 0.1
-	 *
-	 * @return void
 	 */
 	public function enable_translation() {
 
@@ -229,8 +219,6 @@ class Comment_Tagger {
 	 * Create a free-tagging taxonomy for comments.
 	 *
 	 * @since 0.1
-	 *
-	 * @return void
 	 */
 	public function create_taxonomy() {
 
@@ -295,8 +283,6 @@ class Comment_Tagger {
 	 * Force update the number of comments for a taxonomy term.
 	 *
 	 * @since 0.1
-	 *
-	 * @return void
 	 */
 	public function refresh_tag_count() {
 
@@ -320,7 +306,6 @@ class Comment_Tagger {
 	 *
 	 * @param array $terms List of Term taxonomy IDs
 	 * @param object $taxonomy Current taxonomy object of terms
-	 * @return void
 	 */
 	public function update_tag_count( $terms, $taxonomy ) {
 
@@ -356,8 +341,6 @@ class Comment_Tagger {
 	 * Creates the admin page for the taxonomy under the 'Comments' menu.
 	 *
 	 * @since 0.1
-	 *
-	 * @return void
 	 */
 	public function admin_page() {
 
@@ -380,8 +363,6 @@ class Comment_Tagger {
 	 * Enqueue CSS in WP admin to tweak the appearance of various elements.
 	 *
 	 * @since 0.1
-	 *
-	 * @return void
 	 */
 	public function enqueue_styles() {
 
@@ -469,7 +450,6 @@ class Comment_Tagger {
 	 * @param string $display WP just passes an empty string here.
 	 * @param string $column The name of the custom column.
 	 * @param int $term_id The ID of the term being displayed in the table.
-	 * @return void
 	 */
 	public function set_comment_column_values( $display, $column, $term_id ) {
 
@@ -486,8 +466,6 @@ class Comment_Tagger {
 	 * Register a meta box for the comment edit screen.
 	 *
 	 * @since 0.1
-	 *
-	 * @return void
 	 */
 	public function add_meta_box() {
 
@@ -513,7 +491,6 @@ class Comment_Tagger {
 	 *
 	 * @param int $comment_id The numeric ID of the comment
 	 * @param str $comment_status The status of the comment
-	 * @return void
 	 */
 	public function intercept_comment_save( $comment_id, $comment_status ) {
 
@@ -610,7 +587,6 @@ class Comment_Tagger {
 	 * @since 0.1
 	 *
 	 * @param int $comment_id The ID of the comment being saved
-	 * @return void
 	 */
 	public function update_comment_terms( $comment_id ) {
 
@@ -664,7 +640,6 @@ class Comment_Tagger {
 	 * @since 0.1
 	 *
 	 * @param mixed $raw_terms The term names as retrieved from $_POST
-	 * @return void
 	 */
 	private function sanitise_comment_terms( $raw_terms ) {
 
@@ -744,7 +719,6 @@ class Comment_Tagger {
 	 * @since 0.1
 	 *
 	 * @param int $comment_id The ID of the comment being saved
-	 * @return void
 	 */
 	public function delete_comment_terms( $comment_id ) {
 
@@ -762,7 +736,6 @@ class Comment_Tagger {
 	 *
 	 * @param str $text The content to prepend to the comment identifer
 	 * @param object $comment The WordPress comment object
-	 * @return void
 	 */
 	public function front_end_tags( $text, $comment ) {
 
@@ -816,7 +789,6 @@ class Comment_Tagger {
 	 * @since 0.1
 	 *
 	 * @param str $content The existing content
-	 * @return void
 	 */
 	public function front_end_markup( $content = '' ) {
 
@@ -864,8 +836,6 @@ class Comment_Tagger {
 	 * Show front-end version of tags metabox in CommentPress.
 	 *
 	 * @since 0.1
-	 *
-	 * @return void
 	 */
 	public function front_end_markup_commentpress() {
 
@@ -884,8 +854,6 @@ class Comment_Tagger {
 	 * @see https://github.com/select2/select2/tags
 	 *
 	 * @since 0.1
-	 *
-	 * @return void
 	 */
 	public function front_end_enqueue_styles() {
 
@@ -918,8 +886,6 @@ class Comment_Tagger {
 	 * @see https://github.com/select2/select2/tags
 	 *
 	 * @since 0.1
-	 *
-	 * @return void
 	 */
 	public function front_end_enqueue_scripts() {
 
@@ -1100,16 +1066,6 @@ function comment_tagger_get_tagged_comments() {
 
 		// do the query
 		$comments = $comments_query->query( $args );
-
-		/*
-		print_r( array(
-			'comment_term_id' => $comment_term_id,
-			'comment_term' => $comment_term,
-			'tagged_comments' => $tagged_comments,
-			'args' => $args,
-			'comments' => $comments,
-		) ); die();
-		*/
 
 	}
 
