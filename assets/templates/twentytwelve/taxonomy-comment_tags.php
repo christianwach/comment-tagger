@@ -17,7 +17,7 @@ get_header(); ?>
 		<div id="content" role="main">
 
 		<header class="archive-header">
-			<h1 class="archive-title"><?php printf( __( 'Comments Tagged &#8216;%s&#8217;', 'twentytwelve' ), '<span>' . single_tag_title( '', false ) . '</span>' ); ?></h1>
+			<h1 class="archive-title"><?php printf( __( 'Comments Tagged &#8216;%s&#8217;', 'comment-tagger' ), '<span>' . single_tag_title( '', false ) . '</span>' ); ?></h1>
 
 		<?php if ( tag_description() ) : // Show an optional tag description ?>
 			<div class="archive-meta"><?php echo tag_description(); ?></div>
