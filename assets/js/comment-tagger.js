@@ -1,14 +1,10 @@
-/*
-================================================================================
-Comment Tagger Javascript
-================================================================================
-AUTHOR: Christian Wach <needle@haystack.co.uk>
---------------------------------------------------------------------------------
-NOTES
-=====
-
---------------------------------------------------------------------------------
-*/
+/**
+ * Custom Javascript functionality for Comment Tagger.
+ *
+ * @since 0.1
+ *
+ * @package Comment_Tagger
+ */
 
 
 
@@ -195,8 +191,6 @@ CommentTagger.comments.init();
  * Define what happens when the page is ready.
  *
  * @since 0.1
- *
- * @return void
  */
 jQuery(document).ready( function($) {
 

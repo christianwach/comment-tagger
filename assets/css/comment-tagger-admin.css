@@ -1,13 +1,12 @@
-/*
-================================================================================
-Comment Tagger Admin Stylesheet
-================================================================================
-AUTHOR: Christian Wach <needle@haystack.co.uk>
---------------------------------------------------------------------------------
-NOTES
+/**
+ * Comment Tagger Admin Stylesheet.
+ *
+ * Implements styles in WordPress admin for all media.
+ *
+ * @package Comment_Tagger
+ */
 
---------------------------------------------------------------------------------
-*/
+
 
 /* widen column */
 .fixed .column-comments

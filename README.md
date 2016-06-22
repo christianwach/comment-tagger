@@ -1,9 +1,7 @@
 Comment Tagger
 ==============
 
-The *Comment Tagger* plugin lets logged-in readers tag comments. The plugin is intended to work with [*CommentPress Core*](https://wordpress.org/plugins/commentpress-core/) but can (with some effort) be used with other themes. Please bear in mind that this plugin is at an early stage of development.
-
-If you visit a Comment Tag Archive page and get a "Page Not Found" message, visit your Permalinks Settings page to refresh the WordPress rewrite rules.
+The *Comment Tagger* plugin lets logged-in readers add tags to comments. The plugin works out-of-the-box with [*CommentPress Core*](https://wordpress.org/plugins/commentpress-core/) but can also be used with other themes. Please see *Setup* below for details.
 
 ## Installation ##
 
@@ -26,8 +24,8 @@ If you have cloned the code from GitHub, it is assumed that you know what you're
 
 ## Setup ##
 
-The plugin will work "out of the box" with [*CommentPress Core*](https://wordpress.org/plugins/commentpress-core/). If you are using another theme, then you will need to make some additions to your theme.
+This plugin works "out of the box" with [*CommentPress Core*](https://wordpress.org/plugins/commentpress-core/). If you are using another theme, then you will need to make some additions to your theme.
 
-You will need to create a taxonomy archive template to display tagged comments. A sample template for the TwentyTwelve theme template is provided with this plugin - you can find it in 'assets/templates/twentytwelve/taxonomy-comment_tags.php'. Copy this file to the top level of your theme's directory and amend it to match your theme's structure and markup. You will also need to style the output to match your theme.
+You will need to create a taxonomy archive template to display tagged comments. A sample template for the *Twenty Twelve* theme is provided with this plugin - you can find it in 'assets/templates/twentytwelve/taxonomy-comment_tags.php'. Copy this file to the top level of your theme's (or child theme's) directory and amend it to match your theme's structure and markup. You will also need to style the output to match your theme.
 
 If you visit a Comment Tag Archive page and get a "Page Not Found" message, visit your Permalinks Settings page to refresh the WordPress rewrite rules.

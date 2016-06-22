@@ -3,18 +3,18 @@ Contributors: needle
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8MZNB9D3PF48S
 Tags: comments, tagging, taxonomy, commentpress
 Requires at least: 4.4
-Tested up to: 4.4
+Tested up to: 4.5
 Stable tag: 0.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Lets logged-in readers tag comments
+Enables logged-in readers to add tags to comments.
 
 
 
 == Description ==
 
-The *Comment Tagger* plugin lets logged-in readers tag comments. The plugin is intended to work with [*CommentPress Core*](https://wordpress.org/plugins/commentpress-core/) but can (with some effort) be used elsewhere.
+The *Comment Tagger* plugin lets logged-in readers add tags to comments. The plugin works out-of-the-box with [*CommentPress Core*](https://wordpress.org/plugins/commentpress-core/) but can also be used with other themes. Please see 'Installation' for details.
 
 ### Plugin Development
 
@@ -28,6 +28,8 @@ This plugin is in active development. For feature requests and bug reports (or i
 1. Upload plugin files to your `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 
+You will need to create a taxonomy archive template to display tagged comments. A sample template for the *Twenty Twelve* theme is provided with this plugin - you can find it in 'assets/templates/twentytwelve/taxonomy-comment_tags.php'. Copy this file to the top level of your theme's (or child theme's) directory and amend it to match your theme's structure and markup. You will also need to style the output to match your theme.
+
 If you visit a Comment Tag Archive page and get a "Page Not Found" message, visit your Permalinks Settings page to refresh the WordPress rewrite rules.
 
 
@@ -36,7 +38,7 @@ If you visit a Comment Tag Archive page and get a "Page Not Found" message, visi
 
 = 0.1.2 =
 
-Allow comment authors to assign terms in WP Admin
+Allow comment authors to assign terms in WordPress Admin
 
 = 0.1.1 =
 

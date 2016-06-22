@@ -1,14 +1,14 @@
 <?php
 /**
- * The template for displaying Tag pages
+ * A sample template for displaying Comment Tagger tag archives.
  *
- * Used to display archive-type pages for posts in a tag.
+ * Copy this template to your Twenty Twelve child theme's directory in order to
+ * display comments assigned to a tag. You can adapt the markup to your needs if
+ * you want to - the markup below should help you get started.
  *
  * @link https://codex.wordpress.org/Template_Hierarchy
  *
- * @package WordPress
- * @subpackage Twenty_Twelve
- * @since Twenty Twelve 1.0
+ * @package Comment_Tagger
  */
 
 get_header(); ?>

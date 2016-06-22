@@ -38,6 +38,8 @@ if ( ! defined( 'COMMENT_TAGGER_PREFIX' ) ) {
  * A class for encapsulating plugin functionality.
  *
  * @since 0.1
+ *
+ * @package Comment_Tagger
  */
 class Comment_Tagger {
 

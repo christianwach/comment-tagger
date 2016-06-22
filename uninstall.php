@@ -14,7 +14,7 @@ NOTES
 
 
 // kick out if uninstall not called from WordPress
-if ( !defined( 'WP_UNINSTALL_PLUGIN' ) ) { exit(); }
+if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) { exit(); }
 
 
 
@@ -27,7 +27,6 @@ if ( !defined( 'WP_UNINSTALL_PLUGIN' ) ) { exit(); }
  * @see https://gist.github.com/wpsmith/9285391#file-uninstall-terms-taxonomy-2-php
  *
  * @param str $taxonomy The name of the taxonomy to delete
- * @return void
  */
 function comment_tagger_delete_taxonomy( $taxonomy ) {
 
