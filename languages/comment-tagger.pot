@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Comment Tagger 0.1.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/comment-tagger\n"
-"POT-Creation-Date: 2016-02-09 15:45:42+00:00\n"
+"POT-Creation-Date: 2016-06-22 10:57:30+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,84 +20,84 @@ msgstr ""
 msgid "Sorry, but there are no comments for this tag."
 msgstr ""
 
-#: comment-tagger.php:250 comment-tagger.php:252 comment-tagger.php:497
+#: comment-tagger.php:240 comment-tagger.php:242 comment-tagger.php:477
 msgid "Comment Tags"
 msgstr ""
 
-#: comment-tagger.php:251
+#: comment-tagger.php:241
 msgid "Comment Tag"
 msgstr ""
 
-#: comment-tagger.php:253
+#: comment-tagger.php:243
 msgid "Search Comment Tags"
 msgstr ""
 
-#: comment-tagger.php:254
+#: comment-tagger.php:244
 msgid "Popular Comment Tags"
 msgstr ""
 
-#: comment-tagger.php:255
+#: comment-tagger.php:245
 msgid "All Comment Tags"
 msgstr ""
 
-#: comment-tagger.php:256
+#: comment-tagger.php:246
 msgid "Edit Comment Tag"
 msgstr ""
 
-#: comment-tagger.php:257
+#: comment-tagger.php:247
 msgid "Update Comment Tag"
 msgstr ""
 
-#: comment-tagger.php:258
+#: comment-tagger.php:248
 msgid "Add New Comment Tag"
 msgstr ""
 
-#: comment-tagger.php:259
+#: comment-tagger.php:249
 msgid "New Comment Tag Name"
 msgstr ""
 
-#: comment-tagger.php:260
+#: comment-tagger.php:250
 msgid "Separate Comment Tags with commas"
 msgstr ""
 
-#: comment-tagger.php:261
+#: comment-tagger.php:251
 msgid "Add or remove Comment Tag"
 msgstr ""
 
-#: comment-tagger.php:262
+#: comment-tagger.php:252
 msgid "Choose from the most popular Comment Tags"
 msgstr ""
 
-#: comment-tagger.php:455
+#: comment-tagger.php:438
 msgid "Comments"
 msgstr ""
 
-#: comment-tagger.php:799
+#: comment-tagger.php:776
 msgid "Tagged: "
 msgstr ""
 
-#: comment-tagger.php:845
+#: comment-tagger.php:822
 msgid "Tag this comment"
 msgstr ""
 
-#: comment-tagger.php:847
+#: comment-tagger.php:824
 msgid "Select from existing tags or add your own."
 msgstr ""
 
-#: comment-tagger.php:849
+#: comment-tagger.php:826
 msgid "Separate new tags with a comma."
 msgstr ""
 
-#: comment-tagger.php:1042
+#: comment-tagger.php:1013
 msgctxt "tag delimiter"
 msgid ","
 msgstr ""
 
-#: comment-tagger.php:1053
+#: comment-tagger.php:1024
 msgid "Add"
 msgstr ""
 
-#: comment-tagger.php:1220 comment-tagger.php:1368
+#: comment-tagger.php:1181 comment-tagger.php:1329
 msgid "Password protected"
 msgstr ""
 #. Plugin Name of the plugin/theme
