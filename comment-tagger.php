@@ -640,6 +640,7 @@ class Comment_Tagger {
 	 * @since 0.1
 	 *
 	 * @param mixed $raw_terms The term names as retrieved from $_POST
+	 * @return array $term_ids The numerical term IDs
 	 */
 	private function sanitise_comment_terms( $raw_terms ) {
 
@@ -736,6 +737,7 @@ class Comment_Tagger {
 	 *
 	 * @param str $text The content to prepend to the comment identifer
 	 * @param object $comment The WordPress comment object
+	 * @return str $text The markup showing the tags for a comment
 	 */
 	public function front_end_tags( $text, $comment ) {
 
@@ -789,6 +791,7 @@ class Comment_Tagger {
 	 * @since 0.1
 	 *
 	 * @param str $content The existing content
+	 * @return str $html The markup for the tags metabox
 	 */
 	public function front_end_markup( $content = '' ) {
 
