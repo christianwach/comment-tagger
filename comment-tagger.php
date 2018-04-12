@@ -50,7 +50,7 @@ class Comment_Tagger {
 	 *
 	 * @since 0.1
 	 *
-	 * @return object $instance Comment_Tagger instance
+	 * @return object $instance Comment_Tagger instance.
 	 */
 	public static function instance() {
 
@@ -92,7 +92,7 @@ class Comment_Tagger {
 	/**
 	 * Actions to perform on plugin deactivation.
 	 *
-	 * For actions that are performed on plugin deletion, see 'uninstall.php'
+	 * For actions that are performed on plugin deletion, see 'uninstall.php'.
 	 *
 	 * @since 0.1.1
 	 */
@@ -306,8 +306,8 @@ class Comment_Tagger {
 	 *
 	 * @since 0.1
 	 *
-	 * @param array $terms List of Term taxonomy IDs
-	 * @param object $taxonomy Current taxonomy object of terms
+	 * @param array $terms List of Term taxonomy IDs.
+	 * @param object $taxonomy Current taxonomy object of terms.
 	 */
 	public function update_tag_count( $terms, $taxonomy ) {
 
@@ -404,8 +404,8 @@ class Comment_Tagger {
 	 *
 	 * @since 0.1
 	 *
-	 * @param string $parent The existing parent menu item
-	 * @return string $parent The modified parent menu item
+	 * @param string $parent The existing parent menu item.
+	 * @return string $parent The modified parent menu item.
 	 */
 	public function parent_menu( $parent = '' ) {
 
@@ -428,8 +428,8 @@ class Comment_Tagger {
 	 *
 	 * @since 0.1
 	 *
-	 * @param array $columns An array of columns to be shown in the manage terms table
-	 * @return array $columns Modified array of columns to be shown in the manage terms table
+	 * @param array $columns An array of columns to be shown in the manage terms table.
+	 * @return array $columns Modified array of columns to be shown in the manage terms table.
 	 */
 	public function set_comment_column( $columns ) {
 
@@ -491,8 +491,8 @@ class Comment_Tagger {
 	 *
 	 * @since 0.1
 	 *
-	 * @param int $comment_id The numeric ID of the comment
-	 * @param str $comment_status The status of the comment
+	 * @param int $comment_id The numeric ID of the comment.
+	 * @param str $comment_status The status of the comment.
 	 */
 	public function intercept_comment_save( $comment_id, $comment_status ) {
 
@@ -556,15 +556,15 @@ class Comment_Tagger {
 
 
 	/**
-	 * Add capability to assing tags.
+	 * Add capability to assign tags.
 	 *
 	 * @since 0.1.2
 	 *
-	 * @param array $caps The existing capabilities array for the WordPress user
-	 * @param str $cap The capability in question
-	 * @param int $user_id The numerical ID of the WordPress user
-	 * @param array $args The additional arguments
-	 * @return array $caps The modified capabilities array for the WordPress user
+	 * @param array $caps The existing capabilities array for the WordPress user.
+	 * @param str $cap The capability in question.
+	 * @param int $user_id The numerical ID of the WordPress user.
+	 * @param array $args The additional arguments.
+	 * @return array $caps The modified capabilities array for the WordPress user.
 	 */
 	public function enable_comment_terms( $caps, $cap, $user_id, $args ) {
 
@@ -588,7 +588,7 @@ class Comment_Tagger {
 	 *
 	 * @since 0.1
 	 *
-	 * @param int $comment_id The ID of the comment being saved
+	 * @param int $comment_id The ID of the comment being saved.
 	 */
 	public function update_comment_terms( $comment_id ) {
 
@@ -641,8 +641,8 @@ class Comment_Tagger {
 	 *
 	 * @since 0.1
 	 *
-	 * @param mixed $raw_terms The term names as retrieved from $_POST
-	 * @return array $term_ids The numerical term IDs
+	 * @param mixed $raw_terms The term names as retrieved from $_POST.
+	 * @return array $term_ids The numerical term IDs.
 	 */
 	private function sanitise_comment_terms( $raw_terms ) {
 
@@ -721,7 +721,7 @@ class Comment_Tagger {
 	 *
 	 * @since 0.1
 	 *
-	 * @param int $comment_id The ID of the comment being saved
+	 * @param int $comment_id The ID of the comment being saved.
 	 */
 	public function delete_comment_terms( $comment_id ) {
 
@@ -737,9 +737,9 @@ class Comment_Tagger {
 	 *
 	 * @since 0.1
 	 *
-	 * @param str $text The content to prepend to the comment identifer
-	 * @param object $comment The WordPress comment object
-	 * @return str $text The markup showing the tags for a comment
+	 * @param str $text The content to prepend to the comment identifer.
+	 * @param object $comment The WordPress comment object.
+	 * @return str $text The markup showing the tags for a comment.
 	 */
 	public function front_end_tags( $text, $comment ) {
 
@@ -792,8 +792,8 @@ class Comment_Tagger {
 	 *
 	 * @since 0.1
 	 *
-	 * @param str $content The existing content
-	 * @return str $html The markup for the tags metabox
+	 * @param str $content The existing content.
+	 * @return str $html The markup for the tags metabox.
 	 */
 	public function front_end_markup( $content = '' ) {
 
@@ -855,7 +855,7 @@ class Comment_Tagger {
 	 * Add our front-end stylesheets.
 	 *
 	 * Currently using the 4.0.0 version of Select2. The incuded directory is a
-	 * copy of the 'dist' directory
+	 * copy of the 'dist' directory.
 	 * @see https://github.com/select2/select2/tags
 	 *
 	 * @since 0.1
@@ -944,7 +944,7 @@ class Comment_Tagger {
  *
  * @since 0.1
  *
- * @return object the plugin instance
+ * @return object Comment_Tagger The plugin instance.
  */
 function comment_tagger() {
 	return Comment_Tagger::instance();
@@ -1041,7 +1041,7 @@ function comment_tagger_post_tags_meta_box( $post, $box ) {
  *
  * @since 0.1
  *
- * @return array $comments The comments
+ * @return array $comments The comments.
  */
 function comment_tagger_get_tagged_comments() {
 
@@ -1088,7 +1088,7 @@ function comment_tagger_get_tagged_comments() {
  *
  * @since 0.1
  *
- * @return str $html The comments
+ * @return str $html The comments.
  */
 function comment_tagger_get_tagged_comments_content() {
 
@@ -1230,7 +1230,7 @@ function comment_tagger_get_tagged_comments_content() {
  *
  * @since 0.1
  *
- * @return str $html The comments
+ * @return str $html The comments.
  */
 function commentpress_get_tagged_comments_content() {
 
