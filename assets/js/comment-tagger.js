@@ -176,12 +176,20 @@ CommentTagger.comments.select2 = new function() {
 		 */
 		$( document ).on( 'commentpress-ajax-comment-callback', function( event, data ) {
 
+			// Sanity check.
+			if ( ! data.id ) {
+				return;
+			}
+
 			// Configure Select2 with terms.
 			if ( data.comment_tagger_tags ) {
 				me.configure( data.comment_tagger_tags );
 			} else {
 				me.reset();
 			}
+
+			// Hide tags for this comment.
+			$('#comment-' + data.id + ' .comment_tagger_tags').hide();
 
 		});
 
@@ -212,6 +220,9 @@ CommentTagger.comments.select2 = new function() {
 
 		// Reset Select2.
 		$('.comment_tagger_select2').val( null ).trigger( "change" );
+
+		// Show tags for all comments.
+		$('.comment_tagger_tags').show();
 
 	};
 
