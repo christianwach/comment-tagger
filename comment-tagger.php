@@ -936,10 +936,10 @@ class Comment_Tagger {
 		// Bail if empty.
 		if ( count( $terms ) === 0 ) return $data;
 
-		// Build array of term IDs.
+		// Build array of prefixed term IDs.
 		$term_ids = array();
 		foreach( $terms AS $term ) {
-			$term_ids[] = $term->term_id;
+			$term_ids[] = COMMENT_TAGGER_PREFIX . '-' . $term->term_id;
 		}
 
 		// Add to array.

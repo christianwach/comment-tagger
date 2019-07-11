@@ -162,7 +162,7 @@ CommentTagger.comments.select2 = new function() {
 		$(document).on( 'commentpress-ajax-comment-added', function( event, comment_id ) {
 
 			// Reset Select2.
-			$('.comment_tagger_select2').val( null ).trigger( "change" );
+			me.reset();
 
 		});
 
@@ -176,9 +176,56 @@ CommentTagger.comments.select2 = new function() {
 		 */
 		$( document ).on( 'commentpress-ajax-comment-callback', function( event, data ) {
 
-			console.log( 'data', data );
+			// Configure Select2 with terms.
+			if ( data.comment_tagger_tags ) {
+				me.configure( data.comment_tagger_tags );
+			} else {
+				me.reset();
+			}
 
 		});
+
+		/**
+		 * Hook into CommentPress comment form moved trigger.
+		 *
+		 * @since 0.1.3
+		 *
+		 * @param {Object} data The event.
+		 * @param {String} mode The comment form mode ('add' or 'edit').
+		 * @param {Array} data The array of params.
+		 */
+		$( document ).on( 'commentpress-commentform-moved', function( event, mode, data ) {
+
+			// Always reset Select2.
+			me.reset();
+
+		});
+
+	};
+
+	/**
+	 * Reset Select2 to clean slate.
+	 *
+	 * @since 0.1.3
+	 */
+	this.reset = function() {
+
+		// Reset Select2.
+		$('.comment_tagger_select2').val( null ).trigger( "change" );
+
+	};
+
+	/**
+	 * Configure Select2 options.
+	 *
+	 * @since 0.1.3
+	 *
+	 * @param {Array} term_ids The array of term IDs to highlight.
+	 */
+	this.configure = function( term_ids ) {
+
+		// Reset Select2.
+		$('.comment_tagger_select2').val( term_ids ).trigger( "change" );
 
 	};
 
