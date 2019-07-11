@@ -189,6 +189,9 @@ class Comment_Tagger {
 		// Add UI to CommentPress comments.
 		add_action( 'commentpress_comment_form_pre_comment_id_fields', array( $this, 'front_end_markup_commentpress' ) );
 
+		// Add tag data to AJAX edit comment data.
+		add_filter( 'commentpress_ajax_get_comment', array( $this, 'filter_ajax_get_comment' ), 10, 1 );
+
 	}
 
 
@@ -909,6 +912,41 @@ class Comment_Tagger {
 			'CommentTaggerSettings',
 			$vars
 		);
+
+	}
+
+
+
+	/**
+	 * Filter the comment data returned via AJAX when editing a comment.
+	 *
+	 * @since 0.1.3
+	 *
+	 * @param array $data The existing array of comment data.
+	 * @return array $data The modified array of comment data.
+	 */
+	public function filter_ajax_get_comment( $data ) {
+
+		// Sanity check.
+		if ( ! isset( $data['id'] ) ) return $data;
+
+		// Get terms for this comment.
+		$terms = wp_get_object_terms( $data['id'], COMMENT_TAGGER_TAX );
+
+		// Bail if empty.
+		if ( count( $terms ) === 0 ) return $data;
+
+		// Build array of term IDs.
+		$term_ids = array();
+		foreach( $terms AS $term ) {
+			$term_ids[] = $term->term_id;
+		}
+
+		// Add to array.
+		$data['comment_tagger_tags'] = $term_ids;
+
+		// --<
+		return $data;
 
 	}
 

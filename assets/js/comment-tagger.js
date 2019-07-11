@@ -44,6 +44,10 @@ CommentTagger.settings = new function() {
 
 	/**
 	 * Setter for group ID.
+	 *
+	 * @since 0.1
+	 *
+	 * @param {Integer} val The group ID.
 	 */
 	this.set_group_id = function( val ) {
 		this.group_id = val;
@@ -51,6 +55,10 @@ CommentTagger.settings = new function() {
 
 	/**
 	 * Getter for group ID.
+	 *
+	 * @since 0.1
+	 *
+	 * @return {Integer} The group ID.
 	 */
 	this.get_group_id = function() {
 		return this.group_id;
@@ -127,9 +135,7 @@ CommentTagger.comments.select2 = new function() {
 	 */
 	this.init = function() {
 
-		/**
-		 * Select2 init.
-		 */
+		// Select2 init.
 		$('.comment_tagger_select2').select2({
 			tags: true,
 			tokenSeparators: [','],
@@ -150,18 +156,29 @@ CommentTagger.comments.select2 = new function() {
 		 *
 		 * @since 0.1
 		 *
-		 * @param object event The event. (unused)
-		 * @param int comment_id The new comment ID.
+		 * @param {Object} event The event. (unused)
+		 * @param {Integer} comment_id The new comment ID.
 		 */
-		$(document).on(
-			'commentpress-ajax-comment-added',
-			function( event, comment_id ) {
+		$(document).on( 'commentpress-ajax-comment-added', function( event, comment_id ) {
 
-				// Reset Select2.
-				$('.comment_tagger_select2').val( null ).trigger( "change" );
+			// Reset Select2.
+			$('.comment_tagger_select2').val( null ).trigger( "change" );
 
-			} // End function.
-		);
+		});
+
+		/**
+		 * Hook into CommentPress comment edit trigger.
+		 *
+		 * @since 0.1.3
+		 *
+		 * @param {Object} data The event.
+		 * @param {Array} data The array of comment data.
+		 */
+		$( document ).on( 'commentpress-ajax-comment-callback', function( event, data ) {
+
+			console.log( 'data', data );
+
+		});
 
 	};
 
