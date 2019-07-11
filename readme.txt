@@ -38,12 +38,12 @@ If you visit a Comment Tag Archive page and get a "Page Not Found" message, visi
 
 = 0.1.2 =
 
-Allow comment authors to assign terms in WordPress Admin
+Allow comment authors to assign terms in WordPress Admin.
 
 = 0.1.1 =
 
-Switch to local version of Select2 library
+Switch to local version of Select2 library.
 
 = 0.1 =
 
-Initial commit
+Initial commit.

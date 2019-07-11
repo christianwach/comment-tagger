@@ -205,16 +205,9 @@ class Comment_Tagger {
 
 		// Load translations if they exist.
 		load_plugin_textdomain(
-
-			// Unique name.
-			'comment-tagger',
-
-			// Deprecated argument.
-			false,
-
-			// Relative path to directory containing translation files.
-			dirname( plugin_basename( __FILE__ ) ) . '/languages/'
-
+			'comment-tagger', // Unique name.
+			false, // Deprecated argument.
+			dirname( plugin_basename( __FILE__ ) ) . '/languages/' // Relative path to translation files.
 		);
 
 	}
@@ -315,13 +308,13 @@ class Comment_Tagger {
 	 */
 	public function update_tag_count( $terms, $taxonomy ) {
 
-		// Access db wrapper.
+		// Access DB wrapper.
 		global $wpdb;
 
 		// Loop through each term.
 		foreach( (array) $terms AS $term ) {
 
-			// Construct sql.
+			// Construct SQL.
 			$sql = $wpdb->prepare(
 				"SELECT COUNT(*) FROM $wpdb->term_relationships, $wpdb->comments " .
 				"WHERE $wpdb->term_relationships.object_id = $wpdb->comments.comment_ID " .
@@ -536,23 +529,17 @@ class Comment_Tagger {
 
 		}
 
-		// Do we have any *new* terms?
+		// Get sanitised term IDs for any *new* terms.
 		if ( count( $new_terms ) > 0 ) {
-
-			// Get sanitised term IDs.
 			$new_term_ids = $this->sanitise_comment_terms( $new_terms );
-
 		}
 
 		// Combine arrays.
 		$term_ids = array_unique( array_merge( $existing_term_ids, $new_term_ids ) );
 
-		// Did we get any?
+		// Overwrite with new terms if there are some.
 		if ( ! empty( $term_ids ) ) {
-
-			// Overwrite with new terms.
 			wp_set_object_terms( $comment_id, $term_ids, COMMENT_TAGGER_TAX, false );
-
 		}
 
 	}
@@ -572,13 +559,13 @@ class Comment_Tagger {
 	 */
 	public function enable_comment_terms( $caps, $cap, $user_id, $args ) {
 
-		// Only apply this to queries for edit_comment cap.
-		if ( 'assign_' . COMMENT_TAGGER_TAX == $cap ) {
-
-			// Always allow.
-			$caps = array( 'exist' );
-
+		// Only apply caps to queries for edit_comment cap.
+		if ( 'assign_' . COMMENT_TAGGER_TAX != $cap ) {
+			return $caps;
 		}
+
+		// Always allow.
+		$caps = array( 'exist' );
 
 		// --<
 		return $caps;
@@ -606,34 +593,25 @@ class Comment_Tagger {
 		$existing_term_ids = array();
 		$new_term_ids = array();
 
-		// Do we have any *existing* terms?
+		// Get sanitised term IDs for any *existing* terms.
 		if ( isset( $_POST['tax_input'][COMMENT_TAGGER_TAX] ) ) {
-
-			// Get sanitised term IDs.
 			$existing_term_ids = $this->sanitise_comment_terms( $_POST['tax_input'][COMMENT_TAGGER_TAX] );
-
 		}
 
-		// Do we have any *new* terms?
+		// Get sanitised term IDs for any *new* terms.
 		if ( isset( $_POST['newtag'][COMMENT_TAGGER_TAX] ) ) {
-
-			// Get sanitised term IDs.
 			$new_term_ids = $this->sanitise_comment_terms( $_POST['newtag'][COMMENT_TAGGER_TAX] );
-
 		}
 
 		// Combine arrays.
 		$term_ids = array_unique( array_merge( $existing_term_ids, $new_term_ids ) );
 
-		// Did we get any?
+		// Overwrite with new terms if there are any.
 		if ( ! empty( $term_ids ) ) {
-
-			// Overwrite with new terms.
 			wp_set_object_terms( $comment_id, $term_ids, COMMENT_TAGGER_TAX, false );
-
 		}
 
-		// Clear cache
+		// Clear cache.
 		clean_object_term_cache( $comment_id, COMMENT_TAGGER_TAX );
 
 	}
@@ -704,13 +682,10 @@ class Comment_Tagger {
 
 		}
 
-		// Did we get any?
+		// Sanity checks if we have term IDs.
 		if ( ! empty( $term_ids ) ) {
-
-			// Sanity checks.
 			$term_ids = array_map( 'intval', $term_ids );
 			$term_ids = array_unique( $term_ids );
-
 		}
 
 		// --<
@@ -765,7 +740,7 @@ class Comment_Tagger {
 			// Create markup for each.
 			foreach( $terms AS $term ) {
 
-				// Get url.
+				// Get URL.
 				$term_href = get_term_link( $term, COMMENT_TAGGER_TAX );
 
 				// Construct link.
