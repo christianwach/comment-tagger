@@ -1,14 +1,14 @@
-# Copyright (C) 2016 Comment Tagger
+# Copyright (C) 2019 Comment Tagger
 # This file is distributed under the same license as the Comment Tagger package.
 msgid ""
 msgstr ""
 "Project-Id-Version: Comment Tagger 0.1.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/comment-tagger\n"
-"POT-Creation-Date: 2016-06-22 10:57:30+00:00\n"
+"POT-Creation-Date: 2019-07-11 09:23:21+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2016-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2019-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
@@ -20,84 +20,84 @@ msgstr ""
 msgid "Sorry, but there are no comments for this tag."
 msgstr ""
 
-#: comment-tagger.php:240 comment-tagger.php:242 comment-tagger.php:477
+#: comment-tagger.php:237 comment-tagger.php:239 comment-tagger.php:474
 msgid "Comment Tags"
 msgstr ""
 
-#: comment-tagger.php:241
+#: comment-tagger.php:238
 msgid "Comment Tag"
 msgstr ""
 
-#: comment-tagger.php:243
+#: comment-tagger.php:240
 msgid "Search Comment Tags"
 msgstr ""
 
-#: comment-tagger.php:244
+#: comment-tagger.php:241
 msgid "Popular Comment Tags"
 msgstr ""
 
-#: comment-tagger.php:245
+#: comment-tagger.php:242
 msgid "All Comment Tags"
 msgstr ""
 
-#: comment-tagger.php:246
+#: comment-tagger.php:243
 msgid "Edit Comment Tag"
 msgstr ""
 
-#: comment-tagger.php:247
+#: comment-tagger.php:244
 msgid "Update Comment Tag"
 msgstr ""
 
-#: comment-tagger.php:248
+#: comment-tagger.php:245
 msgid "Add New Comment Tag"
 msgstr ""
 
-#: comment-tagger.php:249
+#: comment-tagger.php:246
 msgid "New Comment Tag Name"
 msgstr ""
 
-#: comment-tagger.php:250
+#: comment-tagger.php:247
 msgid "Separate Comment Tags with commas"
 msgstr ""
 
-#: comment-tagger.php:251
+#: comment-tagger.php:248
 msgid "Add or remove Comment Tag"
 msgstr ""
 
-#: comment-tagger.php:252
+#: comment-tagger.php:249
 msgid "Choose from the most popular Comment Tags"
 msgstr ""
 
-#: comment-tagger.php:438
+#: comment-tagger.php:435
 msgid "Comments"
 msgstr ""
 
-#: comment-tagger.php:776
+#: comment-tagger.php:755
 msgid "Tagged: "
 msgstr ""
 
-#: comment-tagger.php:822
+#: comment-tagger.php:801
 msgid "Tag this comment"
 msgstr ""
 
-#: comment-tagger.php:824
+#: comment-tagger.php:803
 msgid "Select from existing tags or add your own."
 msgstr ""
 
-#: comment-tagger.php:826
+#: comment-tagger.php:805
 msgid "Separate new tags with a comma."
 msgstr ""
 
-#: comment-tagger.php:1013
+#: comment-tagger.php:992
 msgctxt "tag delimiter"
 msgid ","
 msgstr ""
 
-#: comment-tagger.php:1024
+#: comment-tagger.php:1003
 msgid "Add"
 msgstr ""
 
-#: comment-tagger.php:1181 comment-tagger.php:1329
+#: comment-tagger.php:1160 comment-tagger.php:1307
 msgid "Password protected"
 msgstr ""
 #. Plugin Name of the plugin/theme
