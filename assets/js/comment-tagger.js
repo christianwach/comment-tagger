@@ -30,27 +30,27 @@ var CommentTagger = CommentTagger || {};
  */
 CommentTagger.settings = new function() {
 
-	// store object refs
+	// Store object refs.
 	var me = this,
 		$ = jQuery.noConflict();
 
-	// init group ID
+	// Init group ID.
 	//this.group_id = false;
 
-	// override if we have our localisation object
+	// Override if we have our localisation object.
 	if ( 'undefined' !== typeof CommentTaggerSettings ) {
 		//this.group_id = CommentTaggerSettings.data.group_id;
 	}
 
 	/**
-	 * Setter for group ID
+	 * Setter for group ID.
 	 */
 	this.set_group_id = function( val ) {
 		this.group_id = val;
 	};
 
 	/**
-	 * Getter for group ID
+	 * Getter for group ID.
 	 */
 	this.get_group_id = function() {
 		return this.group_id;
@@ -71,7 +71,7 @@ CommentTagger.settings = new function() {
  */
 CommentTagger.comments = new function() {
 
-	// store object refs
+	// Store object refs.
 	var me = this,
 		$ = jQuery.noConflict();
 
@@ -81,8 +81,6 @@ CommentTagger.comments = new function() {
 	 * This method should only be called once.
 	 *
 	 * @since 0.1
-	 *
-	 * @return void
 	 */
 	this.init = function() {
 
@@ -94,12 +92,10 @@ CommentTagger.comments = new function() {
 	 * This method should only be called once.
 	 *
 	 * @since 0.1
-	 *
-	 * @return void
 	 */
 	this.dom_ready = function() {
 
-		// init Select2
+		// Init Select2.
 		me.select2.init();
 		me.select2.listeners();
 
@@ -120,7 +116,7 @@ CommentTagger.comments = new function() {
  */
 CommentTagger.comments.select2 = new function() {
 
-	// store object refs
+	// Store object refs.
 	var me = this,
 		$ = jQuery.noConflict();
 
@@ -132,7 +128,7 @@ CommentTagger.comments.select2 = new function() {
 	this.init = function() {
 
 		/**
-		 * Select2 init
+		 * Select2 init.
 		 */
 		$('.comment_tagger_select2').select2({
 			tags: true,
@@ -154,18 +150,17 @@ CommentTagger.comments.select2 = new function() {
 		 *
 		 * @since 0.1
 		 *
-		 * @param object event The event (unused)
-		 * @param int comment_id The new comment ID
-		 * @return void
+		 * @param object event The event. (unused)
+		 * @param int comment_id The new comment ID.
 		 */
 		$(document).on(
 			'commentpress-ajax-comment-added',
 			function( event, comment_id ) {
 
-				// reset Select2
+				// Reset Select2.
 				$('.comment_tagger_select2').val( null ).trigger( "change" );
 
-			} // end function
+			} // End function.
 		);
 
 	};
@@ -178,7 +173,7 @@ CommentTagger.comments.select2 = new function() {
 
 
 
-// do immediate actions
+// Do immediate actions.
 CommentTagger.comments.init();
 
 
@@ -194,10 +189,10 @@ CommentTagger.comments.init();
  */
 jQuery(document).ready( function($) {
 
-	// document ready!
+	// Document ready!
 	CommentTagger.comments.dom_ready();
 
-}); // end document.ready
+});
 
 
 
