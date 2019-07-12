@@ -194,6 +194,28 @@ CommentTagger.comments.select2 = new function() {
 		});
 
 		/**
+		 * Hook into CommentPress comment edited trigger.
+		 *
+		 * @since 0.1.3
+		 *
+		 * @param {Object} data The event.
+		 * @param {Array} data The array of comment data.
+		 */
+		$( document ).on( 'commentpress-ajax-comment-edited', function( event, data ) {
+
+			// Sanity check.
+			if ( ! data.id ) {
+				return;
+			}
+
+			// Replace markup with new terms.
+			if ( data.comment_tagger_markup ) {
+				$('#comment-' + data.id + ' .comment_tagger_tags').replaceWith( data.comment_tagger_markup );
+			}
+
+		});
+
+		/**
 		 * Hook into CommentPress comment form moved trigger.
 		 *
 		 * @since 0.1.3

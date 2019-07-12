@@ -138,8 +138,11 @@ class Comment_Tagger {
 		// Allow comment authors to assign terms.
 		add_filter( 'map_meta_cap', array( $this, 'enable_comment_terms' ), 10, 4 );
 
-		// Intercept comment edit process.
+		// Intercept comment edit process in WordPress admin.
 		add_action( 'edit_comment', array( $this, 'update_comment_terms' ) );
+
+		// Intercept comment edit process in CommentPress front-end.
+		add_action( 'edit_comment', array( $this, 'edit_comment_terms' ) );
 
 		// Intercept comment delete process.
 		add_action( 'delete_comment', array( $this, 'delete_comment_terms' ) );
@@ -191,6 +194,9 @@ class Comment_Tagger {
 
 		// Add tag data to AJAX edit comment data.
 		add_filter( 'commentpress_ajax_get_comment', array( $this, 'filter_ajax_get_comment' ), 10, 1 );
+
+		// Add tag data to AJAX edited comment data.
+		add_filter( 'commentpress_ajax_edited_comment', array( $this, 'filter_ajax_edited_comment' ), 10, 1 );
 
 	}
 
@@ -578,13 +584,16 @@ class Comment_Tagger {
 
 
 	/**
-	 * Save data returned by our comment meta box.
+	 * Save data returned by our comment metabox in WordPress admin.
 	 *
 	 * @since 0.1
 	 *
 	 * @param int $comment_id The ID of the comment being saved.
 	 */
 	public function update_comment_terms( $comment_id ) {
+
+		// If there's no nonce then there's no comment meta data.
+		if ( ! isset( $_POST['_wpnonce'] ) ) return;
 
 		// Get our taxonomy.
 		$tax = get_taxonomy( COMMENT_TAGGER_TAX );
@@ -610,6 +619,73 @@ class Comment_Tagger {
 		$term_ids = array_unique( array_merge( $existing_term_ids, $new_term_ids ) );
 
 		// Overwrite with new terms if there are any.
+		if ( ! empty( $term_ids ) ) {
+			wp_set_object_terms( $comment_id, $term_ids, COMMENT_TAGGER_TAX, false );
+		}
+
+		// Clear cache.
+		clean_object_term_cache( $comment_id, COMMENT_TAGGER_TAX );
+
+	}
+
+
+
+	/**
+	 * Save data returned by our tags select in CommentPress front-end.
+	 *
+	 * @since 0.1.3
+	 *
+	 * @param int $comment_id The ID of the comment being saved.
+	 */
+	public function edit_comment_terms( $comment_id ) {
+
+		// If there's no nonce then there's no comment meta data.
+		if ( ! isset( $_POST['cpajax_comment_nonce'] ) ) return;
+
+		// Get our taxonomy.
+		$tax = get_taxonomy( COMMENT_TAGGER_TAX );
+
+		// Make sure the user can assign terms.
+		if ( ! current_user_can( $tax->cap->assign_terms ) ) return;
+
+		// Init "existing" and "new" arrays.
+		$existing_term_ids = array();
+		$new_term_ids = array();
+		$new_terms = array();
+
+		// Parse the received terms.
+		foreach( $_POST['comment_tagger_tags'] AS $term ) {
+
+			// Does the term contain our prefix?
+			if ( strstr( $term, COMMENT_TAGGER_PREFIX ) ) {
+
+				// It's an existing term.
+				$tmp = explode( '-', $term );
+
+				// Get term ID.
+				$term_id = isset( $tmp[1] ) ? intval( $tmp[1] ) : 0;
+
+				// Add to existing.
+				if ( $term_id !== 0 ) $existing_term_ids[] = $term_id;
+
+			} else {
+
+				// Add term to new.
+				$new_terms[] = $term;
+
+			}
+
+		}
+
+		// Get sanitised term IDs for any *new* terms.
+		if ( count( $new_terms ) > 0 ) {
+			$new_term_ids = $this->sanitise_comment_terms( $new_terms );
+		}
+
+		// Combine arrays.
+		$term_ids = array_unique( array_merge( $existing_term_ids, $new_term_ids ) );
+
+		// Overwrite with new terms if there are some.
 		if ( ! empty( $term_ids ) ) {
 			wp_set_object_terms( $comment_id, $term_ids, COMMENT_TAGGER_TAX, false );
 		}
@@ -944,6 +1020,38 @@ class Comment_Tagger {
 
 		// Add to array.
 		$data['comment_tagger_tags'] = $term_ids;
+
+		// --<
+		return $data;
+
+	}
+
+
+
+	/**
+	 * Filter the comment data returned via AJAX when a comment has been edited.
+	 *
+	 * @since 0.1.3
+	 *
+	 * @param array $data The existing array of comment data.
+	 * @return array $data The modified array of comment data.
+	 */
+	public function filter_ajax_edited_comment( $data ) {
+
+		// Sanity check.
+		if ( ! isset( $data['id'] ) ) return $data;
+
+		// Add tag data.
+		$data = $this->filter_ajax_get_comment( $data );
+
+		// Get comment.
+		$comment = get_comment( $data['id'] );
+
+		// Get markup.
+		$markup = $this->front_end_tags( '', $comment );
+
+		// Add to array.
+		$data['comment_tagger_markup'] = $markup;
 
 		// --<
 		return $data;
