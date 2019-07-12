@@ -621,10 +621,10 @@ class Comment_Tagger {
 		// Overwrite with new terms if there are any.
 		if ( ! empty( $term_ids ) ) {
 			wp_set_object_terms( $comment_id, $term_ids, COMMENT_TAGGER_TAX, false );
+			clean_object_term_cache( $comment_id, COMMENT_TAGGER_TAX );
+		} else {
+			$this->delete_comment_terms( $comment_id );
 		}
-
-		// Clear cache.
-		clean_object_term_cache( $comment_id, COMMENT_TAGGER_TAX );
 
 	}
 
@@ -653,25 +653,30 @@ class Comment_Tagger {
 		$new_term_ids = array();
 		$new_terms = array();
 
-		// Parse the received terms.
-		foreach( $_POST['comment_tagger_tags'] AS $term ) {
+		// Sanity check.
+		if ( isset( $_POST['comment_tagger_tags'] ) AND is_array( $_POST['comment_tagger_tags'] ) ) {
 
-			// Does the term contain our prefix?
-			if ( strstr( $term, COMMENT_TAGGER_PREFIX ) ) {
+			// Parse the received terms.
+			foreach( $_POST['comment_tagger_tags'] AS $term ) {
 
-				// It's an existing term.
-				$tmp = explode( '-', $term );
+				// Does the term contain our prefix?
+				if ( strstr( $term, COMMENT_TAGGER_PREFIX ) ) {
 
-				// Get term ID.
-				$term_id = isset( $tmp[1] ) ? intval( $tmp[1] ) : 0;
+					// It's an existing term.
+					$tmp = explode( '-', $term );
 
-				// Add to existing.
-				if ( $term_id !== 0 ) $existing_term_ids[] = $term_id;
+					// Get term ID.
+					$term_id = isset( $tmp[1] ) ? intval( $tmp[1] ) : 0;
 
-			} else {
+					// Add to existing.
+					if ( $term_id !== 0 ) $existing_term_ids[] = $term_id;
 
-				// Add term to new.
-				$new_terms[] = $term;
+				} else {
+
+					// Add term to new.
+					$new_terms[] = $term;
+
+				}
 
 			}
 
@@ -685,13 +690,13 @@ class Comment_Tagger {
 		// Combine arrays.
 		$term_ids = array_unique( array_merge( $existing_term_ids, $new_term_ids ) );
 
-		// Overwrite with new terms if there are some.
+		// Overwrite with new terms if there are any.
 		if ( ! empty( $term_ids ) ) {
 			wp_set_object_terms( $comment_id, $term_ids, COMMENT_TAGGER_TAX, false );
+			clean_object_term_cache( $comment_id, COMMENT_TAGGER_TAX );
+		} else {
+			$this->delete_comment_terms( $comment_id );
 		}
-
-		// Clear cache.
-		clean_object_term_cache( $comment_id, COMMENT_TAGGER_TAX );
 
 	}
 
@@ -799,7 +804,7 @@ class Comment_Tagger {
 	 * @param object $comment The WordPress comment object.
 	 * @return str $text The markup showing the tags for a comment.
 	 */
-	public function front_end_tags( $text, $comment ) {
+	public function front_end_tags( $text = '', $comment ) {
 
 		// Sanity check.
 		if ( ! isset( $comment->comment_ID ) ) return $text;
@@ -807,14 +812,11 @@ class Comment_Tagger {
 		// Get terms for this comment.
 		$terms = wp_get_object_terms( $comment->comment_ID, COMMENT_TAGGER_TAX );
 
-		// Bail if empty.
-		if ( count( $terms ) === 0 ) return $text;
-
-		// Init tag list.
-		$tag_list = array();
-
 		// Did we get any?
 		if ( count( $terms ) > 0 ) {
+
+			// Init tag list.
+			$tag_list = array();
 
 			// Create markup for each.
 			foreach( $terms AS $term ) {
@@ -833,10 +835,15 @@ class Comment_Tagger {
 			// Wrap in identifying div.
 			$tags = '<div class="comment_tagger_tags"><p>' . __( 'Tagged: ' ) . implode( ' ', $tag_list ) . "</p></div>\n\n";
 
-			// Prepend to text.
-			$text = $tags . $text;
+		} else {
+
+			// Add placeholder div.
+			$tags = '<div class="comment_tagger_tags"></div>' . "\n\n";
 
 		}
+
+		// Prepend to text.
+		$text = $tags . $text;
 
 		// --<
 		return $text;
