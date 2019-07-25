@@ -255,10 +255,29 @@ CommentTagger.comments.select2 = new function() {
 	 *
 	 * @param {Array} term_ids The array of term IDs to highlight.
 	 */
-	this.configure = function( term_ids ) {
+	this.configure = function( terms ) {
 
-		// Reset Select2.
-		$('.comment_tagger_select2').val( term_ids ).trigger( "change" );
+		var term_ids = [],
+			select = $('.comment_tagger_select2'),
+			new_option;
+
+		// Construct array of term IDs.
+		$.each( terms, function( index, value ) {
+			term_ids.push( value.id );
+		});
+
+		// Make sure all options exist.
+		$.each( terms, function( index, value ) {
+			if ( select.find( "option[value='" + value.id + "']" ).length ) {
+				// Found, so skip.
+			} else {
+				new_option = new Option( value.name, value.id, true, true );
+				select.append( new_option );
+			}
+		});
+
+		// Now set Select2 options.
+		select.val( term_ids ).trigger( "change" );
 
 	};
 

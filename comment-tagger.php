@@ -1019,10 +1019,13 @@ class Comment_Tagger {
 		// Bail if empty.
 		if ( count( $terms ) === 0 ) return $data;
 
-		// Build array of prefixed term IDs.
+		// Build array of simple term objects.
 		$term_ids = array();
 		foreach( $terms AS $term ) {
-			$term_ids[] = COMMENT_TAGGER_PREFIX . '-' . $term->term_id;
+			$obj = new stdClass();
+			$obj->id = COMMENT_TAGGER_PREFIX . '-' . $term->term_id;
+			$obj->name = $term->name;
+			$term_ids[] = $obj;
 		}
 
 		// Add to array.
