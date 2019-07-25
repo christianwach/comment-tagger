@@ -36,6 +36,10 @@ If you visit a Comment Tag Archive page and get a "Page Not Found" message, visi
 
 == Changelog ==
 
+= 0.1.3 =
+
+Compatibility with AJAX comment editing in CommentPress.
+
 = 0.1.2 =
 
 Allow comment authors to assign terms in WordPress Admin.
