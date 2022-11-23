@@ -19,17 +19,17 @@ get_header(); ?>
 		<header class="archive-header">
 			<h1 class="archive-title"><?php printf( __( 'Comments Tagged &#8216;%s&#8217;', 'comment-tagger' ), '<span>' . single_tag_title( '', false ) . '</span>' ); ?></h1>
 
-		<?php if ( tag_description() ) : // Show an optional tag description ?>
+		<?php if ( tag_description() ) : /* Show an optional tag description. */ ?>
 			<div class="archive-meta"><?php echo tag_description(); ?></div>
 		<?php endif; ?>
 		</header><!-- .archive-header -->
 
-		<?php $comments = comment_tagger_get_tagged_comments_content(); ?>
+		<?php $tagged_comments = comment_tagger_get_tagged_comments_content(); ?>
 
-		<?php if ( ! empty( $comments ) ) : ?>
-			<?php echo $comments; ?>
+		<?php if ( ! empty( $tagged_comments ) ) : ?>
+			<?php echo $tagged_comments; ?>
 		<?php else : ?>
-			<p><?php _e( 'Sorry, but there are no comments for this tag.', 'comment-tagger' ); ?></p>
+			<p><?php esc_html_e( 'Sorry, but there are no comments for this tag.', 'comment-tagger' ); ?></p>
 		<?php endif; ?>
 
 		</div><!-- #content -->

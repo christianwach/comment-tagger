@@ -6,20 +6,12 @@
  * @package Comment_Tagger
  */
 
-
-
 /**
  * Create global namespace.
  *
  * @since 0.1
  */
 var CommentTagger = CommentTagger || {};
-
-
-
-/* -------------------------------------------------------------------------- */
-
-
 
 /**
  * Create settings class.
@@ -66,12 +58,6 @@ CommentTagger.settings = new function() {
 
 };
 
-
-
-/* -------------------------------------------------------------------------- */
-
-
-
 /**
  * Create comments class.
  *
@@ -110,12 +96,6 @@ CommentTagger.comments = new function() {
 	};
 
 };
-
-
-
-/* -------------------------------------------------------------------------- */
-
-
 
 /**
  * Create comments Select2 class.
@@ -283,20 +263,8 @@ CommentTagger.comments.select2 = new function() {
 
 };
 
-
-
-/* -------------------------------------------------------------------------- */
-
-
-
 // Do immediate actions.
 CommentTagger.comments.init();
-
-
-
-/* -------------------------------------------------------------------------- */
-
-
 
 /**
  * Define what happens when the page is ready.
@@ -309,6 +277,3 @@ jQuery(document).ready( function($) {
 	CommentTagger.comments.dom_ready();
 
 });
-
-
-

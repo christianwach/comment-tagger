@@ -1,22 +1,14 @@
-<?php /*
-================================================================================
-Comment Tagger Uninstaller
-================================================================================
-AUTHOR: Christian Wach <needle@haystack.co.uk>
---------------------------------------------------------------------------------
-NOTES
-=====
+<?php
+/**
+ * Comment Tagger Uninstaller.
+ *
+ * @package Comment_Tagger
+ */
 
-
---------------------------------------------------------------------------------
-*/
-
-
-
-// Kick out if uninstall not called from WordPressk
-if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) { exit(); }
-
-
+// Kick out if uninstall not called from WordPress.
+if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
+	exit();
+}
 
 /**
  * Delete a custom taxonomy and all its data.
@@ -33,44 +25,41 @@ function comment_tagger_delete_taxonomy( $taxonomy ) {
 	// Access DB object.
 	global $wpdb;
 
-	// Construct SQL.
-	$sql = $wpdb->prepare(
-		"SELECT t.*, tt.* FROM $wpdb->terms AS t ".
-		"INNER JOIN $wpdb->term_taxonomy AS tt ON t.term_id = tt.term_id ".
-		"WHERE tt.taxonomy IN ('%s') ".
-		"ORDER BY t.name ASC",
-		$taxonomy
-	);
-
 	// Get terms.
-	$terms = $wpdb->get_results( $sql );
+	// phpcs:ignore: WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+	$terms = $wpdb->get_results( $wpdb->prepare(
+		"SELECT t.*, tt.* FROM $wpdb->terms AS t " .
+		"INNER JOIN {$wpdb->term_taxonomy} AS tt ON t.term_id = tt.term_id " .
+		'WHERE tt.taxonomy IN (%s) ' .
+		'ORDER BY t.name ASC',
+		$taxonomy
+	) );
 
-    // Did we get any?
+	// Did we get any?
 	if ( count( $terms ) > 0 ) {
 
 		// Delete each one in turn.
-		foreach( $terms as $term ) {
+		foreach ( $terms as $term ) {
 
 			// Delete data.
-			$wpdb->delete( $wpdb->term_taxonomy, array( 'term_taxonomy_id' => $term->term_taxonomy_id ) );
-			$wpdb->delete( $wpdb->term_relationships, array( 'term_taxonomy_id' => $term->term_taxonomy_id ) );
-			$wpdb->delete( $wpdb->terms, array( 'term_id' => $term->term_id ) );
+			// phpcs:ignore: WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->delete( $wpdb->term_taxonomy, [ 'term_taxonomy_id' => $term->term_taxonomy_id ] );
+			// phpcs:ignore: WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->delete( $wpdb->term_relationships, [ 'term_taxonomy_id' => $term->term_taxonomy_id ] );
+			// phpcs:ignore: WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->delete( $wpdb->terms, [ 'term_id' => $term->term_id ] );
 
 		}
 	}
 
 	// Delete the taxonomy itself.
-	$wpdb->delete( $wpdb->term_taxonomy, array( 'taxonomy' => $taxonomy ), array( '%s' ) );
+	// phpcs:ignore: WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+	$wpdb->delete( $wpdb->term_taxonomy, [ 'taxonomy' => $taxonomy ], [ '%s' ] );
 
 }
-
-
 
 // Remove our custom taxonomy.
 comment_tagger_delete_taxonomy( 'comment_tags' );
 
 // Lastly, flush rules.
 flush_rewrite_rules();
-
-
-
