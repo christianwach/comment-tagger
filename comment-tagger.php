@@ -4,7 +4,7 @@
  * Description: Lets logged-in readers tag comments.
  * Version: 0.1.4
  * Author: Christian Wach
- * Author URI: http://haystack.co.uk
+ * Author URI: https://haystack.co.uk
  * Plugin URI: https://github.com/christianwach/comment-tagger
  * Text Domain: comment-tagger
  * Domain Path: /languages
