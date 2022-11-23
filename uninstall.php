@@ -11,21 +11,21 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 
 /**
- * Delete a custom taxonomy and all its data.
+ * Delete a custom Taxonomy and all its data.
  *
  * After calling this function, you should also call flush_rewrite_rules() to
  * remove the registered rewrite slug.
  *
  * @see https://gist.github.com/wpsmith/9285391#file-uninstall-terms-taxonomy-2-php
  *
- * @param str $taxonomy The name of the taxonomy to delete.
+ * @param str $taxonomy The name of the Taxonomy to delete.
  */
 function comment_tagger_delete_taxonomy( $taxonomy ) {
 
 	// Access DB object.
 	global $wpdb;
 
-	// Get terms.
+	// Get Terms.
 	// phpcs:ignore: WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 	$terms = $wpdb->get_results( $wpdb->prepare(
 		"SELECT t.*, tt.* FROM $wpdb->terms AS t " .
@@ -52,13 +52,13 @@ function comment_tagger_delete_taxonomy( $taxonomy ) {
 		}
 	}
 
-	// Delete the taxonomy itself.
+	// Delete the Taxonomy itself.
 	// phpcs:ignore: WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 	$wpdb->delete( $wpdb->term_taxonomy, [ 'taxonomy' => $taxonomy ], [ '%s' ] );
 
 }
 
-// Remove our custom taxonomy.
+// Remove our custom Taxonomy.
 comment_tagger_delete_taxonomy( 'comment_tags' );
 
 // Lastly, flush rules.

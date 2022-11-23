@@ -15,15 +15,15 @@
 // Define version - bumping this refreshes CSS and JS.
 define( 'COMMENT_TAGGER_VERSION', '0.1.4' );
 
-// Define taxonomy name.
+// Define Taxonomy name.
 if ( ! defined( 'COMMENT_TAGGER_TAX' ) ) {
 	define( 'COMMENT_TAGGER_TAX', 'comment_tags' );
 }
 
-// Define taxonomy prefix for Select2.
+// Define Taxonomy prefix for Select2.
 if ( ! defined( 'COMMENT_TAGGER_PREFIX' ) ) {
 	// This is a "unique-enough" prefix so we can distinguish between new tags
-	// and the selection of pre-existing ones when the comment form is posted.
+	// and the selection of pre-existing ones when the Comment Form is posted.
 	define( 'COMMENT_TAGGER_PREFIX', 'cmmnt_tggr' );
 }
 
@@ -97,12 +97,12 @@ class Comment_Tagger {
 		// Enable translation.
 		add_action( 'plugins_loaded', [ $this, 'enable_translation' ] );
 
-		// Create taxonomy.
+		// Create Taxonomy.
 		add_action( 'init', [ $this, 'create_taxonomy' ], 0 );
 
 		// Admin hooks.
 
-		// Add admin page.
+		// Add admin menu item.
 		add_action( 'admin_menu', [ $this, 'admin_page' ] );
 
 		// Hack the menu parent.
@@ -114,19 +114,19 @@ class Comment_Tagger {
 		// Register a meta box.
 		add_action( 'add_meta_boxes', [ $this, 'add_meta_box' ] );
 
-		// Intercept comment save process.
+		// Intercept Comment save process.
 		add_action( 'comment_post', [ $this, 'intercept_comment_save' ], 20, 2 );
 
-		// Allow comment authors to assign terms.
+		// Allow Comment Authors to assign Terms.
 		add_filter( 'map_meta_cap', [ $this, 'enable_comment_terms' ], 10, 4 );
 
-		// Intercept comment edit process in WordPress admin.
+		// Intercept Edit Comment process in WordPress admin.
 		add_action( 'edit_comment', [ $this, 'update_comment_terms' ] );
 
-		// Intercept comment edit process in CommentPress front-end.
+		// Intercept Edit Comment process in CommentPress front-end.
 		add_action( 'edit_comment', [ $this, 'edit_comment_terms' ] );
 
-		// Intercept comment delete process.
+		// Intercept Delete Comment process.
 		add_action( 'delete_comment', [ $this, 'delete_comment_terms' ] );
 
 		// Front-end hooks.
@@ -137,13 +137,13 @@ class Comment_Tagger {
 		// Register any public scripts.
 		add_action( 'wp_enqueue_scripts', [ $this, 'front_end_enqueue_scripts' ], 20 );
 
-		// Add tags to comment content.
+		// Add tags to Comment content.
 		add_filter( 'get_comment_text', [ $this, 'front_end_tags' ], 10, 2 );
 
-		// Add UI to CommentPress comments.
+		// Add UI to CommentPress Comments.
 		add_filter( 'comment_id_fields', [ $this, 'front_end_markup' ] );
 
-		// Optionally replace with CommentPress comment hooks.
+		// Optionally replace with CommentPress Comment hooks.
 		add_action( 'commentpress_loaded', [ $this, 'commentpress_loaded' ] );
 
 		/**
@@ -166,16 +166,16 @@ class Comment_Tagger {
 		remove_filter( 'get_comment_text', [ $this, 'front_end_tags' ], 10, 2 );
 		remove_filter( 'comment_id_fields', [ $this, 'front_end_markup' ] );
 
-		// Add tags to comment content.
+		// Add tags to Comment content.
 		add_filter( 'commentpress_comment_identifier_append', [ $this, 'front_end_tags' ], 10, 2 );
 
-		// Add UI to CommentPress comments.
+		// Add UI to CommentPress Comments.
 		add_action( 'commentpress_comment_form_pre_comment_id_fields', [ $this, 'front_end_markup_commentpress' ] );
 
-		// Add tag data to AJAX edit comment data.
+		// Add tag data to AJAX-edit Comment data.
 		add_filter( 'commentpress_ajax_get_comment', [ $this, 'filter_ajax_get_comment' ], 10, 1 );
 
-		// Add tag data to AJAX edited comment data.
+		// Add tag data to AJAX-edited Comment data.
 		add_filter( 'commentpress_ajax_edited_comment', [ $this, 'filter_ajax_edited_comment' ], 10, 1 );
 
 	}
@@ -201,13 +201,13 @@ class Comment_Tagger {
 	}
 
 	/**
-	 * Create a free-tagging taxonomy for comments.
+	 * Create a free-tagging Taxonomy for Comments.
 	 *
 	 * @since 0.1
 	 */
 	public function create_taxonomy() {
 
-		// Define taxonomy arguments.
+		// Define Taxonomy arguments.
 		$args = [
 
 			// General.
@@ -252,44 +252,47 @@ class Comment_Tagger {
 
 		register_taxonomy( COMMENT_TAGGER_TAX, 'comment', $args );
 
-		// Register any hooks/filters that rely on knowing the taxonomy now.
+		// Register any hooks/filters that rely on knowing the Taxonomy now.
 		add_filter( 'manage_edit-' . COMMENT_TAGGER_TAX . '_columns', [ $this, 'set_comment_column' ] );
 		add_action( 'manage_' . COMMENT_TAGGER_TAX . '_custom_column', [ $this, 'set_comment_column_values' ], 10, 3 );
 
 	}
 
 	/**
-	 * Force update the number of comments for a taxonomy term.
+	 * Force update the number of Comments for a Taxonomy Term.
 	 *
 	 * @since 0.1
 	 */
 	public function refresh_tag_count() {
 
+		// Find all the Term IDs.
 		$terms = get_terms( COMMENT_TAGGER_TAX, [ 'hide_empty' => false ] );
 		$tids = [];
 		foreach ( $terms as $term ) {
 			$tids[] = $term->term_taxonomy_id;
 		}
+
+		// Do update.
 		wp_update_term_count_now( $tids, COMMENT_TAGGER_TAX );
 
 	}
 
 	/**
-	 * Manually update the number of comments for a taxonomy term.
+	 * Manually update the number of Comments for a Taxonomy Term.
 	 *
 	 * @see _update_post_term_count()
 	 *
 	 * @since 0.1
 	 *
-	 * @param array $terms List of Term taxonomy IDs.
-	 * @param object $taxonomy Current taxonomy object of terms.
+	 * @param array $terms List of Term Taxonomy IDs.
+	 * @param object $taxonomy Current Taxonomy object of Terms.
 	 */
 	public function update_tag_count( $terms, $taxonomy ) {
 
 		// Access DB wrapper.
 		global $wpdb;
 
-		// Loop through each term.
+		// Loop through each Term.
 		foreach ( (array) $terms as $term ) {
 
 			// Get count.
@@ -316,13 +319,13 @@ class Comment_Tagger {
 	}
 
 	/**
-	 * Creates the admin page for the taxonomy under the 'Comments' menu.
+	 * Creates the admin menu item for the Taxonomy under the 'Comments' menu.
 	 *
 	 * @since 0.1
 	 */
 	public function admin_page() {
 
-		// Get taxonomy object.
+		// Get Taxonomy object.
 		$tax = get_taxonomy( COMMENT_TAGGER_TAX );
 
 		// Add as subpage of 'Comments' menu item.
@@ -344,7 +347,7 @@ class Comment_Tagger {
 
 		global $pagenow;
 
-		// If we're on our taxonomy page.
+		// If we're on our Taxonomy Page.
 		$taxonomy_page = isset( $_GET['taxonomy'] ) ? sanitize_text_field( wp_unslash( $_GET['taxonomy'] ) ) : '';
 		if ( ! empty( $taxonomy_page ) && $taxonomy_page === COMMENT_TAGGER_TAX && $pagenow == 'edit-tags.php' ) {
 
@@ -359,7 +362,7 @@ class Comment_Tagger {
 
 		}
 
-		// If we're on the "Edit Comment" page.
+		// If we're on the "Edit Comment" Page.
 		$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : '';
 		if ( $pagenow == 'comment.php' && ! empty( $_GET['action'] ) && $_GET['action'] === 'editcomment' ) {
 
@@ -373,7 +376,7 @@ class Comment_Tagger {
 	/**
 	 * Fix a bug with highlighting the parent menu item.
 	 *
-	 * By default, when on the edit taxonomy page for a user taxonomy, the "Posts" tab
+	 * By default, when on the edit Taxonomy Page for a user Taxonomy, the "Posts" tab
 	 * is highlighted. This will correct that bug.
 	 *
 	 * @since 0.1
@@ -385,7 +388,7 @@ class Comment_Tagger {
 
 		global $pagenow;
 
-		// If we're editing our comment taxonomy highlight the Comments menu.
+		// If we're editing our Comment Taxonomy highlight the Comments menu.
 		if ( ! empty( $_GET['taxonomy'] ) && $_GET['taxonomy'] == COMMENT_TAGGER_TAX && $pagenow == 'edit-tags.php' ) {
 			$parent = 'edit-comments.php';
 		}
@@ -396,12 +399,12 @@ class Comment_Tagger {
 	}
 
 	/**
-	 * Correct the column name for comment taxonomies - replace "Posts" with "Comments".
+	 * Correct the column name for Comment Taxonomies - replace "Posts" with "Comments".
 	 *
 	 * @since 0.1
 	 *
-	 * @param array $columns An array of columns to be shown in the manage terms table.
-	 * @return array $columns Modified array of columns to be shown in the manage terms table.
+	 * @param array $columns An array of columns to be shown in the manage Terms table.
+	 * @return array $columns Modified array of columns to be shown in the manage Terms table.
 	 */
 	public function set_comment_column( $columns ) {
 
@@ -415,13 +418,13 @@ class Comment_Tagger {
 	}
 
 	/**
-	 * Set values for custom columns in comment taxonomies.
+	 * Set values for custom columns in Comment Taxonomies.
 	 *
 	 * @since 0.1
 	 *
 	 * @param string $display WP just passes an empty string here.
 	 * @param string $column The name of the custom column.
-	 * @param int $term_id The ID of the term being displayed in the table.
+	 * @param int $term_id The ID of the Term being displayed in the table.
 	 */
 	public function set_comment_column_values( $display, $column, $term_id ) {
 
@@ -436,7 +439,7 @@ class Comment_Tagger {
 	}
 
 	/**
-	 * Register a meta box for the comment edit screen.
+	 * Register a meta box for the Edit Comment screen.
 	 *
 	 * @since 0.1
 	 */
@@ -456,21 +459,21 @@ class Comment_Tagger {
 	}
 
 	/**
-	 * Intercept the comment save process and maybe update terms.
+	 * Intercept the Save Comment process and maybe update Terms.
 	 *
 	 * @since 0.1
 	 *
-	 * @param int $comment_id The numeric ID of the comment.
-	 * @param str $comment_status The status of the comment.
+	 * @param int $comment_id The numeric ID of the Comment.
+	 * @param str $comment_status The status of the Comment.
 	 */
 	public function intercept_comment_save( $comment_id, $comment_status ) {
 
-		// Bail if we didn't receive any terms.
+		// Bail if we didn't receive any Terms.
 		if ( ! isset( $_POST['comment_tagger_tags'] ) ) {
 			return;
 		}
 
-		// Bail if the terms array is somehow invalid.
+		// Bail if the Terms array is somehow invalid.
 		if ( ! is_array( $_POST['comment_tagger_tags'] ) ) {
 			return;
 		}
@@ -478,7 +481,7 @@ class Comment_Tagger {
 			return;
 		}
 
-		// Check and sanitise terms array.
+		// Check and sanitise Terms array.
 		$comment_tagger_tags = filter_input( INPUT_POST, 'comment_tagger_tags', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
 		if ( ! empty( $comment_tagger_tags ) ) {
 			array_walk(
@@ -494,16 +497,16 @@ class Comment_Tagger {
 		$new_term_ids = [];
 		$new_terms = [];
 
-		// Parse the received terms.
+		// Parse the received Terms.
 		foreach ( $comment_tagger_tags as $term ) {
 
-			// Does the term contain our prefix?
+			// Does the Term contain our prefix?
 			if ( strstr( $term, COMMENT_TAGGER_PREFIX ) ) {
 
-				// It's an existing term.
+				// It's an existing Term.
 				$tmp = explode( '-', $term );
 
-				// Get term ID.
+				// Get Term ID.
 				$term_id = isset( $tmp[1] ) ? intval( $tmp[1] ) : 0;
 
 				// Add to existing.
@@ -513,14 +516,14 @@ class Comment_Tagger {
 
 			} else {
 
-				// Add term to new.
+				// Add Term to new.
 				$new_terms[] = $term;
 
 			}
 
 		}
 
-		// Get sanitised term IDs for any *new* terms.
+		// Get sanitised Term IDs for any *new* Terms.
 		if ( count( $new_terms ) > 0 ) {
 			$new_term_ids = $this->sanitise_comment_terms( $new_terms );
 		}
@@ -528,7 +531,7 @@ class Comment_Tagger {
 		// Combine arrays.
 		$term_ids = array_unique( array_merge( $existing_term_ids, $new_term_ids ) );
 
-		// Overwrite with new terms if there are some.
+		// Overwrite with new Terms if there are some.
 		if ( ! empty( $term_ids ) ) {
 			wp_set_object_terms( $comment_id, $term_ids, COMMENT_TAGGER_TAX, false );
 		}
@@ -542,7 +545,7 @@ class Comment_Tagger {
 	 *
 	 * @param array $caps The existing capabilities array for the WordPress user.
 	 * @param str $cap The capability in question.
-	 * @param int $user_id The numerical ID of the WordPress user.
+	 * @param int $user_id The numeric ID of the WordPress user.
 	 * @param array $args The additional arguments.
 	 * @return array $caps The modified capabilities array for the WordPress user.
 	 */
@@ -562,23 +565,23 @@ class Comment_Tagger {
 	}
 
 	/**
-	 * Save data returned by our comment metabox in WordPress admin.
+	 * Save data returned by our Comment metabox in WordPress admin.
 	 *
 	 * @since 0.1
 	 *
-	 * @param int $comment_id The ID of the comment being saved.
+	 * @param int $comment_id The ID of the Comment being saved.
 	 */
 	public function update_comment_terms( $comment_id ) {
 
-		// If there's no nonce then there's no comment meta data.
+		// If there's no nonce then there's no Comment meta data.
 		if ( ! isset( $_POST['_wpnonce'] ) ) {
 			return;
 		}
 
-		// Get our taxonomy.
+		// Get our Taxonomy.
 		$tax = get_taxonomy( COMMENT_TAGGER_TAX );
 
-		// Make sure the user can assign terms.
+		// Make sure the user can assign Terms.
 		if ( ! current_user_can( $tax->cap->assign_terms ) ) {
 			return;
 		}
@@ -587,13 +590,13 @@ class Comment_Tagger {
 		$existing_term_ids = [];
 		$new_term_ids = [];
 
-		// Get sanitised term IDs for any *existing* terms.
+		// Get sanitised Term IDs for any *existing* Terms.
 		if ( isset( $_POST['tax_input'][ COMMENT_TAGGER_TAX ] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			$existing_term_ids = $this->sanitise_comment_terms( wp_unslash( $_POST['tax_input'][ COMMENT_TAGGER_TAX ] ) );
 		}
 
-		// Get sanitised term IDs for any *new* terms.
+		// Get sanitised Term IDs for any *new* Terms.
 		if ( isset( $_POST['newtag'][ COMMENT_TAGGER_TAX ] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			$new_term_ids = $this->sanitise_comment_terms( wp_unslash( $_POST['newtag'][ COMMENT_TAGGER_TAX ] ) );
@@ -602,7 +605,7 @@ class Comment_Tagger {
 		// Combine arrays.
 		$term_ids = array_unique( array_merge( $existing_term_ids, $new_term_ids ) );
 
-		// Overwrite with new terms if there are any.
+		// Overwrite with new Terms if there are any.
 		if ( ! empty( $term_ids ) ) {
 			wp_set_object_terms( $comment_id, $term_ids, COMMENT_TAGGER_TAX, false );
 			clean_object_term_cache( $comment_id, COMMENT_TAGGER_TAX );
@@ -617,19 +620,19 @@ class Comment_Tagger {
 	 *
 	 * @since 0.1.3
 	 *
-	 * @param int $comment_id The ID of the comment being saved.
+	 * @param int $comment_id The ID of the Comment being saved.
 	 */
 	public function edit_comment_terms( $comment_id ) {
 
-		// If there's no nonce then there's no comment meta data.
+		// If there's no nonce then there's no Comment meta data.
 		if ( ! isset( $_POST['cpajax_comment_nonce'] ) ) {
 			return;
 		}
 
-		// Get our taxonomy.
+		// Get our Taxonomy.
 		$tax = get_taxonomy( COMMENT_TAGGER_TAX );
 
-		// Make sure the user can assign terms.
+		// Make sure the user can assign Terms.
 		if ( ! current_user_can( $tax->cap->assign_terms ) ) {
 			return;
 		}
@@ -639,7 +642,7 @@ class Comment_Tagger {
 		$new_term_ids = [];
 		$new_terms = [];
 
-		// Check and sanitise terms array.
+		// Check and sanitise Terms array.
 		$comment_tagger_tags = filter_input( INPUT_POST, 'comment_tagger_tags', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
 		if ( ! empty( $comment_tagger_tags ) ) {
 			array_walk(
@@ -653,16 +656,16 @@ class Comment_Tagger {
 		// Sanity check.
 		if ( ! empty( $comment_tagger_tags ) && is_array( $comment_tagger_tags ) ) {
 
-			// Parse the received terms.
+			// Parse the received Terms.
 			foreach ( $comment_tagger_tags as $term ) {
 
-				// Does the term contain our prefix?
+				// Does the Term contain our prefix?
 				if ( strstr( $term, COMMENT_TAGGER_PREFIX ) ) {
 
-					// It's an existing term.
+					// It's an existing Term.
 					$tmp = explode( '-', $term );
 
-					// Get term ID.
+					// Get Term ID.
 					$term_id = isset( $tmp[1] ) ? intval( $tmp[1] ) : 0;
 
 					// Add to existing.
@@ -672,7 +675,7 @@ class Comment_Tagger {
 
 				} else {
 
-					// Add term to new.
+					// Add Term to new.
 					$new_terms[] = $term;
 
 				}
@@ -681,7 +684,7 @@ class Comment_Tagger {
 
 		}
 
-		// Get sanitised term IDs for any *new* terms.
+		// Get sanitised Term IDs for any *new* Terms.
 		if ( count( $new_terms ) > 0 ) {
 			$new_term_ids = $this->sanitise_comment_terms( $new_terms );
 		}
@@ -689,7 +692,7 @@ class Comment_Tagger {
 		// Combine arrays.
 		$term_ids = array_unique( array_merge( $existing_term_ids, $new_term_ids ) );
 
-		// Overwrite with new terms if there are any.
+		// Overwrite with new Terms if there are any.
 		if ( ! empty( $term_ids ) ) {
 			wp_set_object_terms( $comment_id, $term_ids, COMMENT_TAGGER_TAX, false );
 			clean_object_term_cache( $comment_id, COMMENT_TAGGER_TAX );
@@ -700,35 +703,35 @@ class Comment_Tagger {
 	}
 
 	/**
-	 * Sanitise comment terms.
+	 * Sanitise Comment Terms.
 	 *
 	 * @since 0.1
 	 *
-	 * @param mixed $raw_terms The term names as retrieved from $_POST.
-	 * @return array $term_ids The numerical term IDs.
+	 * @param mixed $raw_terms The Term names as retrieved from $_POST.
+	 * @return array $term_ids The array of numeric Term IDs.
 	 */
 	private function sanitise_comment_terms( $raw_terms ) {
 
-		// Is this a multi-term taxonomy?
+		// Is this a multi-term Taxonomy?
 		if ( is_array( $raw_terms ) ) {
 
-			// Yes, get terms and validate.
+			// Yes, get Terms and validate.
 			$terms = array_map( 'esc_attr', $raw_terms );
 
 		} else {
 
-			// We should receive a comma-delimited array of term names.
+			// We should receive a comma-delimited array of Term names.
 			$terms = array_map( 'esc_attr', explode( ',', $raw_terms ) );
 
 		}
 
-		// Init term IDs.
+		// Init Term IDs.
 		$term_ids = [];
 
 		// Loop through them.
 		foreach ( $terms as $term ) {
 
-			// Does the term exist?
+			// Does the Term exist?
 			$exists = term_exists( $term, COMMENT_TAGGER_TAX );
 
 			// If it does.
@@ -736,24 +739,24 @@ class Comment_Tagger {
 
 				/*
 				 * Should be array e.g. array( 'term_id' => 12, 'term_taxonomy_id' => 34 )
-				 * since we specify the taxonomy.
+				 * since we specify the Taxonomy.
 				 */
 
-				// Add term ID to array.
+				// Add Term ID to array.
 				$term_ids[] = $exists['term_id'];
 
 			} else {
 
 				/*
-				 * Let's add the term - but note: return value is either:
+				 * Let's add the Term - but note: return value is either:
 				 * WP_Error or array e.g. array( 'term_id' => 12, 'term_taxonomy_id' => 34 )
 				 */
 				$new_term = wp_insert_term( $term, COMMENT_TAGGER_TAX );
 
 				/*
-				 * Add term ID to array if there's no error.
+				 * Add Term ID to array if there's no error.
 				 *
-				 * If there was an error somewhere and the terms couldn't be set
+				 * If there was an error somewhere and the Terms couldn't be set
 				 * then we should let people know at some point.
 				 */
 				if ( ! is_wp_error( $new_term ) ) {
@@ -764,7 +767,7 @@ class Comment_Tagger {
 
 		}
 
-		// Sanity checks if we have term IDs.
+		// Sanity checks if we have Term IDs.
 		if ( ! empty( $term_ids ) ) {
 			$term_ids = array_map( 'intval', $term_ids );
 			$term_ids = array_unique( $term_ids );
@@ -776,11 +779,11 @@ class Comment_Tagger {
 	}
 
 	/**
-	 * Delete comment terms when a comment is deleted.
+	 * Delete Comment Terms when a Comment is deleted.
 	 *
 	 * @since 0.1
 	 *
-	 * @param int $comment_id The ID of the comment being saved.
+	 * @param int $comment_id The ID of the Comment being saved.
 	 */
 	public function delete_comment_terms( $comment_id ) {
 
@@ -790,13 +793,13 @@ class Comment_Tagger {
 	}
 
 	/**
-	 * Show tags on front-end, appended to comment text.
+	 * Show tags on front-end, appended to Comment text.
 	 *
 	 * @since 0.1
 	 *
-	 * @param str $text The content to prepend to the comment identifer.
-	 * @param object $comment The WordPress comment object.
-	 * @return str $text The markup showing the tags for a comment.
+	 * @param str $text The content to prepend to the Comment identifer.
+	 * @param object $comment The WordPress Comment object.
+	 * @return str $text The markup showing the tags for a Comment.
 	 */
 	public function front_end_tags( $text = '', $comment ) {
 
@@ -805,7 +808,7 @@ class Comment_Tagger {
 			return $text;
 		}
 
-		// Get terms for this comment.
+		// Get Terms for this Comment.
 		$terms = wp_get_object_terms( $comment->comment_ID, COMMENT_TAGGER_TAX );
 
 		// Did we get any?
@@ -858,7 +861,7 @@ class Comment_Tagger {
 	 */
 	public function front_end_markup( $content = '' ) {
 
-		// Only our taxonomy.
+		// Only our Taxonomy.
 		$taxonomies = [ COMMENT_TAGGER_TAX ];
 
 		// Config.
@@ -995,12 +998,12 @@ class Comment_Tagger {
 	}
 
 	/**
-	 * Filter the comment data returned via AJAX when editing a comment.
+	 * Filter the Comment data returned via AJAX when editing a Comment.
 	 *
 	 * @since 0.1.3
 	 *
-	 * @param array $data The existing array of comment data.
-	 * @return array $data The modified array of comment data.
+	 * @param array $data The existing array of Comment data.
+	 * @return array $data The modified array of Comment data.
 	 */
 	public function filter_ajax_get_comment( $data ) {
 
@@ -1009,7 +1012,7 @@ class Comment_Tagger {
 			return $data;
 		}
 
-		// Get terms for this comment.
+		// Get Terms for this Comment.
 		$terms = wp_get_object_terms( $data['id'], COMMENT_TAGGER_TAX );
 
 		// Bail if empty.
@@ -1017,7 +1020,7 @@ class Comment_Tagger {
 			return $data;
 		}
 
-		// Build array of simple term objects.
+		// Build array of simple Term objects.
 		$term_ids = [];
 		foreach ( $terms as $term ) {
 			$obj = new stdClass();
@@ -1035,12 +1038,12 @@ class Comment_Tagger {
 	}
 
 	/**
-	 * Filter the comment data returned via AJAX when a comment has been edited.
+	 * Filter the Comment data returned via AJAX when a Comment has been edited.
 	 *
 	 * @since 0.1.3
 	 *
-	 * @param array $data The existing array of comment data.
-	 * @return array $data The modified array of comment data.
+	 * @param array $data The existing array of Comment data.
+	 * @return array $data The modified array of Comment data.
 	 */
 	public function filter_ajax_edited_comment( $data ) {
 
@@ -1052,7 +1055,7 @@ class Comment_Tagger {
 		// Add tag data.
 		$data = $this->filter_ajax_get_comment( $data );
 
-		// Get comment.
+		// Get Comment.
 		$comment = get_comment( $data['id'] );
 
 		// Get markup.
@@ -1090,14 +1093,14 @@ register_deactivation_hook( __FILE__, [ comment_tagger(), 'deactivate' ] );
 
 /**
  * This is a clone of `post_tags_meta_box` which is usually used to display post
- * tags form fields. It has been modified so that the terms are assigned to the
- * comment not the post. The capability check has also been changed to see if a
- * user can edit the comment - this may be changed to assign custom capabilities
- * to the taxonomy itself and then use the 'map_meta_caps' filter to make the
+ * tags form fields. It has been modified so that the Terms are assigned to the
+ * Comment not the Post. The capability check has also been changed to see if a
+ * user can edit the Comment - this may be changed to assign custom capabilities
+ * to the Taxonomy itself and then use the 'map_meta_caps' filter to make the
  * decision.
  *
  * NB: there's a to-do note on the original that suggests that it should be made
- * more compatible with general taxonomies...
+ * more compatible with general Taxonomies...
  *
  * @todo Create taxonomy-agnostic wrapper for this.
  *
@@ -1121,7 +1124,7 @@ register_deactivation_hook( __FILE__, [ comment_tagger(), 'deactivate' ] );
  */
 function comment_tagger_post_tags_meta_box( $post, $box ) {
 
-	// Access comment.
+	// Access Comment.
 	global $comment;
 
 	// Parse the passed in arguments.
@@ -1133,7 +1136,7 @@ function comment_tagger_post_tags_meta_box( $post, $box ) {
 	}
 	$r = wp_parse_args( $args, $defaults );
 
-	// Get taxonomy data.
+	// Get Taxonomy data.
 	$tax_name = esc_attr( $r['taxonomy'] );
 	$taxonomy = get_taxonomy( $r['taxonomy'] );
 	$user_can_assign_terms = current_user_can( $taxonomy->cap->assign_terms );
@@ -1163,11 +1166,11 @@ function comment_tagger_post_tags_meta_box( $post, $box ) {
 }
 
 /**
- * Utility function to get tagged comments for a taxonomy archive page.
+ * Utility function to get tagged Comments for a Taxonomy Archive Page.
  *
  * @since 0.1
  *
- * @return array $comments The comments.
+ * @return array $comments The Comments.
  */
 function comment_tagger_get_tagged_comments() {
 
@@ -1178,7 +1181,7 @@ function comment_tagger_get_tagged_comments() {
 	$comment_term_id = get_queried_object_id();
 	$comment_term = get_queried_object();
 
-	// Get comment IDs.
+	// Get Comment IDs.
 	$tagged_comments = get_objects_in_term( $comment_term_id, $comment_term->taxonomy );
 
 	// Test for empty.
@@ -1206,20 +1209,20 @@ function comment_tagger_get_tagged_comments() {
 }
 
 /**
- * General tagged comments page display function.
+ * General tagged Comments Page display function.
  *
- * Use this function asa starting point to adapt this plugin to your theme.
+ * Use this function as a starting point to adapt this plugin to your theme.
  *
  * @since 0.1
  *
- * @return str $html The comments.
+ * @return str $html The Comments.
  */
 function comment_tagger_get_tagged_comments_content() {
 
 	// Init output.
 	$html = '';
 
-	// Get all comments for this archive.
+	// Get all Comments for this Archive.
 	$all_comments = comment_tagger_get_tagged_comments();
 
 	// Kick out if none.
@@ -1227,12 +1230,12 @@ function comment_tagger_get_tagged_comments_content() {
 		return $html;
 	}
 
-	// Build list of posts to which they are attached.
+	// Build list of Posts to which they are attached.
 	$posts_with = [];
 	$post_comment_counts = [];
 	foreach ( $all_comments as $comment ) {
 
-		// Add to posts with comments array.
+		// Add to Posts with Comments array.
 		if ( ! in_array( $comment->comment_post_ID, $posts_with ) ) {
 			$posts_with[] = $comment->comment_post_ID;
 		}
@@ -1281,7 +1284,7 @@ function comment_tagger_get_tagged_comments_content() {
 			// Open li.
 			$html .= '<li class="comment_tagger_post">' . "\n";
 
-			// Define comment count.
+			// Define Comment count.
 			$comment_count_text = sprintf( _n(
 				// Singular.
 				'<span class="comment_tagger_count">%d</span> comment',
@@ -1297,7 +1300,7 @@ function comment_tagger_get_tagged_comments_content() {
 			// Show it.
 			$html .= '<h4>' . get_the_title() . ' <span>(' . $comment_count_text . ')</span></h4>' . "\n";
 
-			// Open comments div.
+			// Open Comments div.
 			$html .= '<div class="comment_tagger_comments">' . "\n";
 
 			// Check for password-protected.
@@ -1308,7 +1311,7 @@ function comment_tagger_get_tagged_comments_content() {
 
 			} else {
 
-				// Build array of comments for this post.
+				// Build array of Comments for this Post.
 				$comments_to_show = [];
 				foreach ( $all_comments as $comment ) {
 					if ( $comment->comment_post_ID == get_the_ID() ) {
@@ -1331,7 +1334,7 @@ function comment_tagger_get_tagged_comments_content() {
 
 			}
 
-			// Close comments div.
+			// Close Comments div.
 			$html .= '</div>' . "\n";
 
 			// Close li.
@@ -1353,18 +1356,18 @@ function comment_tagger_get_tagged_comments_content() {
 }
 
 /**
- * Tagged comments page display function specifically designed for CommentPress.
+ * Tagged Comments Page display function specifically designed for CommentPress.
  *
  * @since 0.1
  *
- * @return str $html The comments.
+ * @return str $html The Comments.
  */
 function commentpress_get_tagged_comments_content() {
 
 	// Init output.
 	$html = '';
 
-	// Get all comments for this archive.
+	// Get all Comments for this Archive.
 	$all_comments = comment_tagger_get_tagged_comments();
 
 	// Kick out if none.
@@ -1372,12 +1375,12 @@ function commentpress_get_tagged_comments_content() {
 		return $html;
 	}
 
-	// Build list of posts to which they are attached.
+	// Build list of Posts to which they are attached.
 	$posts_with = [];
 	$post_comment_counts = [];
 	foreach ( $all_comments as $comment ) {
 
-		// Add to posts with comments array.
+		// Add to Posts with Comments array.
 		if ( ! in_array( $comment->comment_post_ID, $posts_with ) ) {
 			$posts_with[] = $comment->comment_post_ID;
 		}
@@ -1426,7 +1429,7 @@ function commentpress_get_tagged_comments_content() {
 			// Open li.
 			$html .= '<li class="page_li"><!-- page li -->' . "\n\n";
 
-			// Define comment count.
+			// Define Comment count.
 			$comment_count_text = sprintf( _n(
 				// Singular.
 				'<span class="cp_comment_count">%d</span> comment',
@@ -1442,7 +1445,7 @@ function commentpress_get_tagged_comments_content() {
 			// Show it.
 			$html .= '<h4>' . get_the_title() . ' <span>(' . $comment_count_text . ')</span></h4>' . "\n\n";
 
-			// Open comments div.
+			// Open Comments div.
 			$html .= '<div class="item_body">' . "\n\n";
 
 			// Open ul.
@@ -1464,7 +1467,7 @@ function commentpress_get_tagged_comments_content() {
 
 				foreach ( $all_comments as $comment ) {
 
-					// Maybe show the comment.
+					// Maybe show the Comment.
 					if ( $comment->comment_post_ID == get_the_ID() ) {
 						$html .= commentpress_format_comment( $comment );
 					}
@@ -1479,7 +1482,7 @@ function commentpress_get_tagged_comments_content() {
 			// Close ul.
 			$html .= '</ul>' . "\n\n";
 
-			// Close comments div.
+			// Close Comments div.
 			$html .= '</div><!-- /item_body -->' . "\n\n";
 
 			// Close li.
