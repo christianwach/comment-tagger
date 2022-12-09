@@ -144,7 +144,13 @@ class Comment_Tagger {
 		add_filter( 'comment_id_fields', [ $this, 'front_end_markup' ] );
 
 		// Optionally replace with CommentPress Comment hooks.
-		add_action( 'commentpress_loaded', [ $this, 'commentpress_loaded' ] );
+		if ( defined( 'COMMENTPRESS_VERSION' ) ) {
+			if ( version_compare( COMMENTPRESS_VERSION, '3.9.20', '>' ) ) {
+				add_action( 'commentpress/core/loaded', [ $this, 'commentpress_loaded' ] );
+			} else {
+				add_action( 'commentpress_loaded', [ $this, 'commentpress_loaded' ] );
+			}
+		}
 
 		/**
 		 * Broadcast that this plugin has loaded.
